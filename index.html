@@ -54,379 +54,888 @@
 </script>
 
 <style>
+/* ============================================================
+   TOKENS — light is the base; dark redefines tokens only.
+   ============================================================ */
 :root{
-  --bg:#ffffff; --surface:#f7f8fa; --surface-2:#eef1f5;
-  --text:#12161d; --muted:#5b6675; --faint:#8a94a3;
-  --line:#e2e6ec; --line-strong:#12161d;
-  --accent:#12161d; --accent-fg:#ffffff;
+  --ground:#f6f4ef;
+  --surface:#efece4;
+  --surface-2:#e7e3d9;
+  --ink:#1a1d21;
+  --muted:#5c636d;
+  --faint:#8b9099;
+  --rule:#ddd7ca;
+  --rule-strong:#1a1d21;
+  --accent:#2f6a56;
+  --accent-soft:#e3ece7;
+  --flag:#9c4a2a;
+  --shadow:0 1px 2px rgba(26,29,33,.05), 0 8px 24px -12px rgba(26,29,33,.14);
+
+  --display:"Fraunces",Georgia,"Times New Roman",serif;
+  --body:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;
+
+  --measure:63ch;
+  --rail:186px;
+  --gutter:clamp(20px,5vw,40px);
+  --maxw:1180px;
 }
-:root:not([data-theme="light"]){}
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --bg:#0e1116; --surface:#151a21; --surface-2:#1c222b;
-    --text:#e8ecf1; --muted:#9aa5b4; --faint:#6b7686;
-    --line:#242b35; --line-strong:#e8ecf1;
-    --accent:#e8ecf1; --accent-fg:#0e1116;
+    --ground:#14171a;
+    --surface:#1a1e22;
+    --surface-2:#22272c;
+    --ink:#e8e6e0;
+    --muted:#9aa1a9;
+    --faint:#6e757e;
+    --rule:#2a2f35;
+    --rule-strong:#e8e6e0;
+    --accent:#6bab92;
+    --accent-soft:#1d2a26;
+    --flag:#d08159;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0e1116; --surface:#151a21; --surface-2:#1c222b;
-  --text:#e8ecf1; --muted:#9aa5b4; --faint:#6b7686;
-  --line:#242b35; --line-strong:#e8ecf1;
-  --accent:#e8ecf1; --accent-fg:#0e1116;
+  --ground:#14171a;
+  --surface:#1a1e22;
+  --surface-2:#22272c;
+  --ink:#e8e6e0;
+  --muted:#9aa1a9;
+  --faint:#6e757e;
+  --rule:#2a2f35;
+  --rule-strong:#e8e6e0;
+  --accent:#6bab92;
+  --accent-soft:#1d2a26;
+  --flag:#d08159;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
 }
 
-*{box-sizing:border-box}
+/* ============================================================
+   BASE
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
 body{
-  margin:0;background:var(--bg);color:var(--text);
-  font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,Inter,Helvetica,Arial,sans-serif;
-  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:clamp(15.5px,.34vw + 14.6px,17px);
+  line-height:1.62;
+  font-weight:400;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
 }
-.wrap{max-width:920px;margin:0 auto;padding:0 24px}
-img,svg{max-width:100%;height:auto}
-a{overflow-wrap:anywhere}
-h1,h2,h3{overflow-wrap:break-word}
 
-/* ---------- hero ---------- */
-header{padding:88px 0 56px;border-bottom:1px solid var(--line)}
-.eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--faint);font-weight:600}
-h1{font-size:clamp(38px,7vw,60px);line-height:1.04;letter-spacing:-.025em;
-  font-weight:800;margin:14px 0 0}
-.role{font-size:clamp(16px,2.4vw,19px);color:var(--muted);margin-top:10px;font-weight:500}
-.lede{font-size:clamp(16px,2.2vw,18px);color:var(--text);max-width:44rem;
-  margin-top:26px;line-height:1.65}
-.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
-.links a{
-  display:inline-block;padding:9px 16px;border:1px solid var(--line);border-radius:6px;
-  color:var(--text);text-decoration:none;font-size:14px;font-weight:600;
-  transition:background .15s,border-color .15s,transform .15s;
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;line-height:1.1;
+  letter-spacing:-.018em;text-wrap:balance;margin:0}
+p{margin:0}
+a{color:inherit}
+ul{margin:0;padding:0;list-style:none}
+
+::selection{background:var(--accent);color:var(--ground)}
+
+:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:3px;
+  border-radius:3px;
 }
-.links a:hover{background:var(--surface-2);border-color:var(--line-strong);transform:translateY(-1px)}
-.links a.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
-.links a.primary:hover{opacity:.88}
 
-/* ---------- generic section ---------- */
-section{padding:56px 0;border-bottom:1px solid var(--line)}
-section:last-of-type{border-bottom:none}
-h2{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);
-  font-weight:700;margin:0 0 26px}
-
-/* ---------- stat strip ---------- */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
-  background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
-.stat{background:var(--bg);padding:18px 16px}
-.stat .n{font-size:24px;font-weight:750;letter-spacing:-.02em;line-height:1.1}
-.stat .l{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.4}
-
-/* ---------- skills ---------- */
-.skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px 32px}
-.skill h3{font-size:14px;font-weight:700;margin:0 0 6px;letter-spacing:-.01em}
-.skill p{margin:0;font-size:14px;color:var(--muted);line-height:1.6}
-
-/* ---------- projects ---------- */
-.proj{padding:30px 0;border-top:1px solid var(--line)}
-.proj:first-of-type{border-top:none;padding-top:0}
-.proj-top{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.proj h3{font-size:clamp(20px,3vw,25px);font-weight:750;letter-spacing:-.02em;margin:0;line-height:1.2}
-.badge{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
-  background:var(--accent);color:var(--accent-fg);padding:4px 9px;border-radius:4px;white-space:nowrap}
-.stack{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 14px}
-.chip{font-size:12px;font-weight:600;color:var(--muted);background:var(--surface-2);
-  padding:3px 9px;border-radius:4px}
-.proj p.sum{margin:0 0 14px;color:var(--text);max-width:46rem}
-.proj ul{margin:0 0 16px;padding-left:18px}
-.proj li{margin-bottom:7px;color:var(--muted);font-size:15px;line-height:1.55}
-.proj li strong{color:var(--text);font-weight:650}
-.proj-links{display:flex;gap:8px;flex-wrap:wrap}
-.proj-links a{font-size:13px;font-weight:650;color:var(--text);text-decoration:none;
-  border:1px solid var(--line);padding:6px 13px;border-radius:5px;transition:background .15s,border-color .15s}
-.proj-links a:hover{background:var(--surface-2);border-color:var(--line-strong)}
-
-/* ---------- table ---------- */
-.tw{overflow-x:auto;margin:2px 0 16px}
-table{width:100%;border-collapse:collapse;font-size:14px;min-width:420px}
-th{text-align:left;font-size:11px;letter-spacing:.09em;text-transform:uppercase;
-  color:var(--faint);font-weight:700;padding:0 14px 7px 0;border-bottom:1.5px solid var(--line-strong)}
-td{padding:8px 14px 8px 0;border-bottom:1px solid var(--line);color:var(--muted);vertical-align:top}
-td:first-child{color:var(--text);font-weight:600;white-space:nowrap}
-
-/* ---------- credentials ---------- */
-.creds{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:26px}
-.cred h3{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);
-  font-weight:700;margin:0 0 10px}
-.cred ul{margin:0;padding-left:17px}
-.cred li{font-size:14px;color:var(--muted);margin-bottom:7px;line-height:1.5}
-.cred li strong{color:var(--text);font-weight:650}
-
-/* ---------- contact ---------- */
-.contact{background:var(--surface);border:1px solid var(--line);border-radius:10px;
-  padding:34px;margin:56px 0}
-.contact h3{font-size:clamp(20px,3vw,26px);font-weight:750;letter-spacing:-.02em;margin:0 0 8px}
-.contact p{margin:0 0 20px;color:var(--muted);max-width:38rem}
-
-footer{padding:34px 0 56px;color:var(--faint);font-size:13px;
-  display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
-
-/* ---------- responsive ---------- */
-@media (max-width:900px){
-  .wrap{padding:0 20px}
-  .creds{gap:22px}
+.skip{
+  position:absolute;left:-9999px;top:0;z-index:100;
+  background:var(--ink);color:var(--ground);
+  padding:12px 18px;font-family:var(--mono);font-size:13px;
+  text-decoration:none;border-radius:0 0 4px 0;
 }
-@media (max-width:640px){
-  body{font-size:15px}
-  .wrap{padding:0 18px}
-  header{padding:48px 0 36px}
-  h1{letter-spacing:-.02em}
-  .lede{margin-top:20px}
-  .links{gap:8px}
-  .links a{padding:10px 14px;font-size:13.5px}
-  section{padding:38px 0}
-  h2{margin-bottom:20px}
-  .stats{grid-template-columns:repeat(2,1fr)}
-  .stat{padding:14px 13px}
-  .stat .n{font-size:21px}
-  .skills{grid-template-columns:1fr;gap:18px}
-  .proj{padding:24px 0}
-  .proj-top{gap:8px}
-  .badge{font-size:10px;padding:3px 7px}
-  .proj li{font-size:14.5px}
-  .proj-links a{padding:9px 14px}
-  .creds{grid-template-columns:1fr;gap:22px}
-  .contact{padding:24px;margin:38px 0}
-  footer{padding:26px 0 44px;flex-direction:column;gap:6px}
+.skip:focus{left:0}
+
+/* mono utility label */
+.lab{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  color:var(--faint);
+  font-weight:500;
 }
-@media (max-width:400px){
-  .stats{grid-template-columns:1fr}
-  .links a{width:100%;text-align:center}
+
+.shell{max-width:var(--maxw);margin:0 auto;padding:0 var(--gutter)}
+
+/* ============================================================
+   TOP BAR
+   ============================================================ */
+.topbar{
+  position:sticky;top:0;z-index:40;
+  background:color-mix(in srgb, var(--ground) 88%, transparent);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--rule);
+}
+.topbar-in{
+  max-width:var(--maxw);margin:0 auto;padding:0 var(--gutter);
+  height:58px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+}
+.mark{
+  font-family:var(--mono);font-size:12.5px;font-weight:500;
+  letter-spacing:.09em;text-transform:uppercase;
+  text-decoration:none;color:var(--ink);white-space:nowrap;
+}
+.mark span{color:var(--faint)}
+.topbar-right{display:flex;align-items:center;gap:6px}
+
+.tnav{display:none;gap:2px}
+@media (min-width:820px){.tnav{display:flex}}
+.tnav a{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);text-decoration:none;
+  padding:7px 11px;border-radius:4px;transition:color .18s,background .18s;
+}
+.tnav a:hover{color:var(--ink);background:var(--surface)}
+.tnav a[aria-current="true"]{color:var(--accent)}
+
+.tbtn{
+  appearance:none;border:1px solid var(--rule);background:transparent;
+  color:var(--muted);width:34px;height:34px;border-radius:6px;
+  display:grid;place-items:center;cursor:pointer;
+  transition:color .18s,border-color .18s,background .18s;
+}
+.tbtn:hover{color:var(--ink);border-color:var(--rule-strong);background:var(--surface)}
+.tbtn svg{width:15px;height:15px;display:block}
+.icon-sun{display:none}
+:root[data-theme="dark"] .icon-sun{display:block}
+:root[data-theme="dark"] .icon-moon{display:none}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .icon-sun{display:block}
+  :root:not([data-theme="light"]) .icon-moon{display:none}
+}
+
+/* ============================================================
+   HERO — the thesis, not the name
+   ============================================================ */
+.hero{padding:clamp(56px,10vw,116px) 0 clamp(40px,6vw,68px)}
+.hero .kicker{display:flex;align-items:center;gap:10px;margin-bottom:26px}
+.hero .kicker::after{content:"";flex:1;height:1px;background:var(--rule)}
+
+.thesis{
+  font-family:var(--display);
+  font-size:clamp(33px,6.4vw,64px);
+  font-weight:600;
+  line-height:1.06;
+  letter-spacing:-.028em;
+  max-width:17ch;
+  font-variation-settings:"opsz" 120;
+}
+.thesis em{font-style:normal;color:var(--accent)}
+
+.hero .sub{
+  margin-top:26px;max-width:var(--measure);
+  font-size:1.06em;color:var(--muted);line-height:1.68;
+}
+.hero .sub strong{color:var(--ink);font-weight:500}
+
+.who{
+  margin-top:34px;padding-top:20px;border-top:1px solid var(--rule);
+  display:flex;flex-wrap:wrap;gap:8px 26px;align-items:baseline;
+}
+.who .name{font-family:var(--display);font-size:1.06em;font-weight:600;letter-spacing:-.01em}
+.who .meta{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.02em}
+
+.cta{display:flex;flex-wrap:wrap;gap:9px;margin-top:26px}
+.btn{
+  display:inline-flex;align-items:center;gap:7px;
+  font-family:var(--mono);font-size:12.5px;letter-spacing:.05em;
+  text-decoration:none;padding:11px 16px;border-radius:6px;
+  border:1px solid var(--rule);color:var(--ink);background:transparent;
+  cursor:pointer;transition:border-color .18s,background .18s,transform .18s;
+  white-space:nowrap;
+}
+.btn:hover{border-color:var(--rule-strong);background:var(--surface);transform:translateY(-1px)}
+.btn.solid{background:var(--ink);color:var(--ground);border-color:var(--ink)}
+.btn.solid:hover{background:var(--ink);opacity:.87;transform:translateY(-1px)}
+.btn svg{width:13px;height:13px;flex:none}
+
+/* ============================================================
+   SECTION + LEDGER RAIL
+   ============================================================ */
+.sec{border-top:1px solid var(--rule);padding:clamp(44px,6vw,80px) 0}
+.sec-in{display:grid;gap:12px}
+@media (min-width:1000px){
+  .sec-in{grid-template-columns:var(--rail) minmax(0,1fr);gap:36px}
+  .rail{position:sticky;top:86px;align-self:start}
+}
+.rail{display:flex;align-items:baseline;gap:9px;padding-bottom:6px}
+.rail .lab{color:var(--faint)}
+@media (min-width:1000px){
+  .rail{flex-direction:column;gap:4px;padding-bottom:0}
+  .rail .rail-note{font-family:var(--mono);font-size:11px;color:var(--faint);
+    line-height:1.5;max-width:15ch;margin-top:2px}
+}
+.rail-note{display:none}
+@media (min-width:1000px){.rail-note{display:block}}
+
+h2.sh{font-size:clamp(23px,2.7vw,31px);letter-spacing:-.022em;margin-bottom:6px}
+.sec-lede{color:var(--muted);max-width:var(--measure);margin-bottom:26px}
+
+/* ============================================================
+   FIGURES — tabular ledger cells
+   ============================================================ */
+.figs{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));
+  border:1px solid var(--rule);border-radius:8px;overflow:hidden;
+  background:var(--rule);gap:1px;
+}
+.fig{background:var(--ground);padding:16px 15px 15px}
+.fig .n{
+  font-family:var(--display);font-size:clamp(25px,3.4vw,33px);font-weight:600;
+  letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums;
+}
+.fig .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;
+  color:var(--muted);margin-top:8px;line-height:1.45;text-transform:uppercase}
+
+/* ============================================================
+   CAPABILITIES
+   ============================================================ */
+.caps{display:grid;gap:0}
+.cap{
+  display:grid;gap:4px 22px;padding:17px 0;border-top:1px solid var(--rule);
+}
+.cap:first-child{border-top:none;padding-top:0}
+@media (min-width:640px){
+  .cap{grid-template-columns:150px minmax(0,1fr);align-items:baseline}
+}
+.cap h3{font-family:var(--body);font-size:13.5px;font-weight:600;letter-spacing:0}
+.cap p{color:var(--muted);font-size:.94em;line-height:1.6}
+
+/* ============================================================
+   WORK — case studies
+   ============================================================ */
+.work{display:grid;gap:0}
+.case{padding:34px 0;border-top:1px solid var(--rule)}
+.case:first-child{border-top:none;padding-top:0}
+
+.case-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 14px}
+.case h3{font-size:clamp(20px,2.5vw,26px);letter-spacing:-.022em}
+.pill{
+  font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  padding:4px 8px;border-radius:4px;white-space:nowrap;
+  background:var(--accent-soft);color:var(--accent);border:1px solid transparent;
+}
+.stack{display:flex;flex-wrap:wrap;gap:6px;margin:13px 0 15px}
+.tag{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;
+  color:var(--muted);background:var(--surface);padding:4px 8px;border-radius:4px;
+}
+.case .claim{max-width:var(--measure);margin-bottom:16px;font-size:1.01em}
+
+.beats{display:grid;gap:14px;max-width:var(--measure);margin-bottom:18px}
+.beat{display:grid;gap:3px}
+.beat .bt{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--faint);
+}
+.beat p{color:var(--muted);font-size:.96em;line-height:1.62}
+.beat p strong{color:var(--ink);font-weight:500}
+
+/* defect table — clay = defect, green = resolution */
+.tablewrap{overflow-x:auto;margin:4px 0 20px;border:1px solid var(--rule);border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:13.5px}
+caption{
+  text-align:left;padding:12px 15px 0;font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.09em;text-transform:uppercase;color:var(--faint);
+}
+th{
+  text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;font-weight:500;color:var(--faint);
+  padding:12px 15px 9px;border-bottom:1px solid var(--rule);
+}
+td{padding:10px 15px;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--muted)}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--surface)}
+td.defect{color:var(--flag);font-family:var(--mono);font-size:12px;white-space:nowrap}
+td.fix{color:var(--ink)}
+td.fix code{
+  font-family:var(--mono);font-size:11.5px;color:var(--accent);
+  background:var(--accent-soft);padding:1.5px 5px;border-radius:3px;
+}
+
+.case-links{display:flex;flex-wrap:wrap;gap:8px}
+.tlink{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;
+  text-decoration:none;color:var(--muted);
+  border-bottom:1px solid var(--rule);padding-bottom:2px;
+  transition:color .18s,border-color .18s;
+}
+.tlink:hover{color:var(--accent);border-color:var(--accent)}
+
+/* ============================================================
+   TIMELINE / CREDENTIALS
+   ============================================================ */
+.rows{display:grid;gap:0}
+.row{
+  display:grid;gap:3px 22px;padding:16px 0;border-top:1px solid var(--rule);
+}
+.row:first-child{border-top:none;padding-top:0}
+@media (min-width:640px){
+  .row{grid-template-columns:118px minmax(0,1fr);align-items:baseline}
+}
+.row .when{
+  font-family:var(--mono);font-size:11.5px;color:var(--faint);
+  letter-spacing:.03em;font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+.row .what{font-weight:500;font-size:.98em}
+.row .detail{color:var(--muted);font-size:.93em;margin-top:2px;max-width:var(--measure)}
+
+/* ============================================================
+   CONTACT
+   ============================================================ */
+.contact-card{
+  border:1px solid var(--rule);border-radius:10px;padding:clamp(24px,4vw,38px);
+  background:var(--surface);box-shadow:var(--shadow);
+}
+.contact-card h2{font-size:clamp(24px,3.2vw,34px);letter-spacing:-.024em}
+.contact-card p{color:var(--muted);max-width:var(--measure);margin-top:12px}
+
+.copy-note{
+  font-family:var(--mono);font-size:11px;color:var(--accent);
+  opacity:0;transition:opacity .2s;margin-left:2px;
+}
+.copy-note.on{opacity:1}
+
+footer{
+  border-top:1px solid var(--rule);
+  padding:26px 0 44px;
+  display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
+  font-family:var(--mono);font-size:11.5px;color:var(--faint);letter-spacing:.03em;
+}
+footer a{color:var(--faint);text-decoration:none}
+footer a:hover{color:var(--ink)}
+
+/* ============================================================
+   REVEAL
+   ============================================================ */
+.rv{opacity:0;transform:translateY(10px);
+  transition:opacity .6s cubic-bezier(.2,.6,.3,1),transform .6s cubic-bezier(.2,.6,.3,1)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  .rv{opacity:1;transform:none;transition:none}
+}
+
+/* ============================================================
+   PRINT
+   ============================================================ */
+@media print{
+  .topbar,.cta,.tbtn,.skip,.case-links{display:none}
+  body{background:#fff;color:#000;font-size:10.5pt}
+  .sec{padding:16pt 0;border-color:#ccc}
+  .sec-in{grid-template-columns:1fr}
+  .rail{position:static}
+  .rv{opacity:1;transform:none}
+  a{text-decoration:none;color:#000}
+  @page{margin:14mm}
 }
 </style>
 </head>
 <body>
-<div class="wrap">
+<a class="skip" href="#main">Skip to content</a>
 
-<header>
-  <div class="eyebrow">Data Analyst · Portfolio 2026</div>
-  <h1>Asifali N</h1>
-  <div class="role">Power BI · Excel · SQL · Machine Learning</div>
-  <p class="lede">I turn messy business data into decisions people actually act on.
-  B.Tech Information Technology (2026), Google Data Analytics certified, published
-  researcher, and two-time national hackathon winner — currently looking for a
-  Data Analyst or Business Analyst role.</p>
-  <div class="links">
-    <a class="primary" href="mailto:asifali.n7777@gmail.com">Email me</a>
-    <a href="https://linkedin.com/in/asifali-n7777" target="_blank" rel="noopener">LinkedIn</a>
-    <a href="https://github.com/ASIFALI-N7777" target="_blank" rel="noopener">GitHub</a>
-    <a href="https://claude.ai/code/artifact/0bd8ba6c-71da-4667-ac75-74aeb5ebca27" target="_blank" rel="noopener">Résumé</a>
-    <a href="https://claude.ai/code/artifact/87596369-8445-48a5-9b18-5c9ac3c52b89" target="_blank" rel="noopener">Full CV</a>
+<div class="topbar">
+  <div class="topbar-in">
+    <a class="mark" href="#top">Asifali&nbsp;N <span>/ Data Analyst</span></a>
+    <div class="topbar-right">
+      <nav class="tnav" aria-label="Sections">
+        <a href="#work">Work</a>
+        <a href="#capabilities">Capabilities</a>
+        <a href="#background">Background</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <button class="tbtn" id="theme" type="button" aria-label="Switch colour theme">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.6M12 19.4V22M2 12h2.6M19.4 12H22M4.9 4.9l1.9 1.9M17.2 17.2l1.9 1.9M19.1 4.9l-1.9 1.9M6.8 17.2l-1.9 1.9"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<main id="main">
+<div id="top"></div>
+
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="shell">
+    <div class="kicker rv"><span class="lab">Data Analyst · Portfolio 2026</span></div>
+
+    <h1 class="thesis rv">Numbers you can <em>audit</em>, not just read.</h1>
+
+    <p class="sub rv">Most analysis asks you to trust the output. I build the other kind —
+    where every dropped row, corrected price and merged region stays visible as a formula
+    you can click into. <strong>If a reviewer can't see why a number moved, the pipeline
+    isn't finished.</strong> Graduating 2026, and looking for my first analyst role.</p>
+
+    <div class="who rv">
+      <span class="name">Asifali N</span>
+      <span class="meta">B.Tech IT, 2026 · Google Data Analytics certified</span>
+      <span class="meta">Tamil Nadu, India</span>
+    </div>
+
+    <div class="cta rv">
+      <a class="btn solid" href="mailto:asifali.n7777@gmail.com">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="2"/><path d="m3 6 9 6.5L21 6"/></svg>
+        Get in touch
+      </a>
+      <a class="btn" href="https://claude.ai/code/artifact/0bd8ba6c-71da-4667-ac75-74aeb5ebca27" target="_blank" rel="noopener">Résumé</a>
+      <a class="btn" href="https://claude.ai/code/artifact/87596369-8445-48a5-9b18-5c9ac3c52b89" target="_blank" rel="noopener">Full CV</a>
+      <a class="btn" href="https://github.com/ASIFALI-N7777" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn" href="https://linkedin.com/in/asifali-n7777" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
   </div>
 </header>
 
-<section>
-  <h2>At a glance</h2>
-  <div class="stats">
-    <div class="stat"><div class="n">10,000+</div><div class="l">sales records cleaned &amp; modelled</div></div>
-    <div class="stat"><div class="n">2</div><div class="l">analytics &amp; engineering internships</div></div>
-    <div class="stat"><div class="n">1</div><div class="l">peer-reviewed publication (IJRTI)</div></div>
-    <div class="stat"><div class="n">2</div><div class="l">national hackathon prizes</div></div>
-  </div>
-</section>
-
-<section>
-  <h2>What I work with</h2>
-  <div class="skills">
-    <div class="skill">
-      <h3>Analysis &amp; BI</h3>
-      <p>Excel — Pivot Tables, Slicers, XLOOKUP, nested IF, SUMIFS, Power Query.
-      Power BI — DAX measures, data modelling, interactive dashboards.</p>
-    </div>
-    <div class="skill">
-      <h3>Data &amp; SQL</h3>
-      <p>SQL / MySQL — joins, aggregations, grouping. Data cleaning and validation,
-      ETL, exploratory analysis, KPI reporting.</p>
-    </div>
-    <div class="skill">
-      <h3>Programming</h3>
-      <p>Python, Java, PowerShell, HTML/CSS/JavaScript. Git and GitHub for version
-      control; Postman for API testing.</p>
-    </div>
-    <div class="skill">
-      <h3>Machine learning</h3>
-      <p>Supervised classification, feature engineering, cross-validation,
-      model evaluation on precision / recall / F1.</p>
-    </div>
-    <div class="skill">
-      <h3>AI-assisted development</h3>
-      <p>Claude and Claude Code for rapid prototyping, code review and documentation;
-      prompt engineering; AI-augmented analysis.</p>
-    </div>
-    <div class="skill">
-      <h3>How I work</h3>
-      <p>Auditable over clever — if a reviewer cannot see why a row was dropped,
-      the pipeline is not finished.</p>
+<!-- ================= FIGURES ================= -->
+<section class="sec" aria-label="Key figures">
+  <div class="shell">
+    <div class="sec-in">
+      <div class="rail rv"><span class="lab">Ledger</span>
+        <span class="rail-note">The record, in round numbers.</span></div>
+      <div class="rv">
+        <div class="figs">
+          <div class="fig"><div class="n">10,000+</div><div class="l">Order lines cleaned</div></div>
+          <div class="fig"><div class="n">8</div><div class="l">Defect classes resolved</div></div>
+          <div class="fig"><div class="n">2</div><div class="l">Internships</div></div>
+          <div class="fig"><div class="n">1</div><div class="l">Paper published</div></div>
+          <div class="fig"><div class="n">2</div><div class="l">National hackathon prizes</div></div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<section>
-  <h2>Selected projects</h2>
+<!-- ================= WORK ================= -->
+<section class="sec" id="work">
+  <div class="shell">
+    <div class="sec-in">
+      <div class="rail rv"><span class="lab">Work</span>
+        <span class="rail-note">Three projects, and what each one actually had to solve.</span></div>
 
-  <article class="proj">
-    <div class="proj-top">
-      <h3>Sales Data Analysis Pipeline</h3>
-    </div>
-    <div class="stack">
-      <span class="chip">Excel</span><span class="chip">Power BI / DAX</span>
-      <span class="chip">Python</span><span class="chip">PowerShell</span><span class="chip">SQL</span>
-    </div>
-    <p class="sum">An end-to-end pipeline that turns a deliberately dirty 10,000+ row
-    sales extract into an auditable, refreshable KPI dashboard.</p>
+      <div>
+        <h2 class="sh rv">Selected work</h2>
+        <p class="sec-lede rv">Each of these started from a problem someone already had —
+        a dataset nobody trusted, a classroom where decline surfaced too late, a ration
+        shop where the paperwork couldn't say who collected what.</p>
 
-    <div class="tw">
-    <table>
-      <tr><th>Defect in the raw extract</th><th>How it was handled</th></tr>
-      <tr><td>Duplicate postings</td><td>MATCH first-occurrence test drives a duplicate flag</td></tr>
-      <tr><td>Three date formats</td><td>DATE / DATEVALUE / SEARCH — locale-independent parsing</td></tr>
-      <tr><td>Currency stored as text</td><td>SUBSTITUTE + VALUE conversion to number</td></tr>
-      <tr><td>Blank prices, missing categories</td><td>XLOOKUP against the product master</td></tr>
-      <tr><td>Casing, padding, region aliases</td><td>TRIM / UPPER plus an alias-to-canonical mapping</td></tr>
-      <tr><td>Cancelled &amp; returned rows</td><td>Nested IF inclusion rules with a stated exclusion reason</td></tr>
-    </table>
-    </div>
+        <div class="work">
 
-    <ul>
-      <li><strong>Auditable by design.</strong> Every column of the clean layer is a live
-      Excel formula reading from the raw sheet — nothing pre-computed in Python, so a
-      reviewer can click any cell and see why a row was kept, corrected or dropped.</li>
-      <li><strong>Stable measure layer.</strong> A deterministic SUMIFS/AVERAGEIFS summary
-      sits between pivots and charts, so visuals do not break when a pivot field expands.</li>
-      <li><strong>Dashboard.</strong> DAX measures for Total Sales, Profit % and YoY Growth,
-      five PivotTables on a shared cache, three slicers, and a loss watchlist showing
-      where margin is leaking.</li>
-      <li><strong>Reproducible.</strong> Three scripts rebuild the whole thing from the raw
-      extract — the monthly refresh is re-run, not rebuilt.</li>
-    </ul>
-    <div class="proj-links">
-      <a href="https://github.com/ASIFALI-N7777/Sales-Data-Analysis-using-Excel-Power-BI" target="_blank" rel="noopener">GitHub</a>
-    </div>
-  </article>
+          <!-- CASE 1 -->
+          <article class="case rv">
+            <div class="case-head">
+              <h3>Sales Data Analysis Pipeline</h3>
+            </div>
+            <div class="stack">
+              <span class="tag">Excel</span><span class="tag">Power BI / DAX</span>
+              <span class="tag">Python</span><span class="tag">PowerShell</span><span class="tag">SQL</span>
+            </div>
+            <p class="claim">An end-to-end pipeline that turns a deliberately dirty
+            10,000-row sales extract into a KPI dashboard you can defend line by line.</p>
 
-  <article class="proj">
-    <div class="proj-top">
-      <h3>Cognitive Drift Detection System</h3>
-      <span class="badge">Published — IJRTI 2026</span>
-    </div>
-    <div class="stack">
-      <span class="chip">Machine Learning</span><span class="chip">Python</span>
-      <span class="chip">Learning Analytics</span>
-    </div>
-    <p class="sum">A web-based system that flags student cognitive drift early enough
-    for a teacher to act — final year project, published as a peer-reviewed paper.</p>
-    <ul>
-      <li><strong>The gap it closes.</strong> Decline is normally noticed at assessment
-      time. The behavioural signals precede it by weeks, but nobody is watching them.</li>
-      <li><strong>Features.</strong> Session frequency, time-on-task, assessment trend,
-      response-time patterns and interaction depth over a rolling window.</li>
-      <li><strong>Models.</strong> Logistic Regression and Random Forest compared under
-      5-fold cross-validation with hyperparameter tuning; classified into Normal,
-      Early Drift and High Drift.</li>
-      <li><strong>Measured on the right thing.</strong> Precision, recall and F1 rather
-      than raw accuracy — missing a drifting student costs more than a false alarm,
-      so recall was protected deliberately.</li>
-      <li><strong>Teacher-facing.</strong> Dashboards surface who crossed a threshold
-      this week, so the output reads as a name to check on, not a model score.</li>
-    </ul>
-    <div class="proj-links">
-      <a href="https://github.com/ASIFALI-N7777/Cognitive_Drift_Learning_System" target="_blank" rel="noopener">GitHub</a>
-    </div>
-  </article>
+            <div class="tablewrap">
+              <table>
+                <caption>Defects in the raw extract, and how each was handled</caption>
+                <thead>
+                  <tr><th scope="col">Defect</th><th scope="col">Resolution</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td class="defect">Duplicate postings</td>
+                      <td class="fix"><code>MATCH</code> first-occurrence test drives a duplicate flag</td></tr>
+                  <tr><td class="defect">Three date formats</td>
+                      <td class="fix"><code>DATE</code> / <code>DATEVALUE</code> / <code>SEARCH</code> — locale-independent parsing</td></tr>
+                  <tr><td class="defect">Currency stored as text</td>
+                      <td class="fix"><code>SUBSTITUTE</code> + <code>VALUE</code> conversion to number</td></tr>
+                  <tr><td class="defect">Blank prices</td>
+                      <td class="fix"><code>XLOOKUP</code> recovery against the product master</td></tr>
+                  <tr><td class="defect">Region aliases</td>
+                      <td class="fix">Alias-to-canonical mapping table, joined on lookup</td></tr>
+                  <tr><td class="defect">Cancelled &amp; returned rows</td>
+                      <td class="fix">Nested <code>IF</code> rules that record <em>why</em> a row was excluded</td></tr>
+                </tbody>
+              </table>
+            </div>
 
-  <article class="proj">
-    <div class="proj-top">
-      <h3>Smart Ration Distribution System</h3>
-      <span class="badge">First Prize — National 2025</span>
-    </div>
-    <div class="stack">
-      <span class="chip">IoT</span><span class="chip">Automation</span>
-      <span class="chip">Public Systems</span>
-    </div>
-    <p class="sum">A digitised public distribution system that makes ration release
-    traceable and hard to defraud.</p>
-    <ul>
-      <li><strong>Identity-gated release.</strong> Ration is dispensed only after the
-      beneficiary's unique ID card is scanned — removing the discretionary step where
-      most leakage occurred.</li>
-      <li><strong>Immutable log.</strong> Every dispense records who, what, when and
-      which shop; duplicate claims fail because the entitlement is already marked
-      for that period.</li>
-      <li><strong>IoT integration.</strong> Barcode/RFID hardware writes to a central
-      database, giving live stock and dispatch visibility instead of monthly
-      reconciliation.</li>
-      <li><strong>Result.</strong> Fraudulent and duplicate collection blocked at the
-      point of dispense, with a full audit trail for oversight.</li>
-    </ul>
-    <div class="proj-links">
-      <a href="https://github.com/ASIFALI-N7777" target="_blank" rel="noopener">GitHub</a>
-    </div>
-  </article>
-</section>
+            <div class="beats">
+              <div class="beat">
+                <span class="bt">The decision that mattered</span>
+                <p>Every column of the clean layer is a <strong>live formula reading from the raw
+                sheet</strong> — nothing pre-computed in Python. It costs performance and buys
+                something better: a reviewer can click any cell and see why that row was kept,
+                corrected or dropped.</p>
+              </div>
+              <div class="beat">
+                <span class="bt">Stability</span>
+                <p>A deterministic <strong>SUMIFS/AVERAGEIFS layer</strong> sits between the pivots
+                and the charts, so a visual doesn't break the moment someone expands a pivot field.</p>
+              </div>
+              <div class="beat">
+                <span class="bt">Outcome</span>
+                <p>DAX measures for Total Sales, Profit % and YoY Growth; five PivotTables on a
+                shared cache; three slicers; and a <strong>loss watchlist</strong> showing where
+                margin is leaking. Three scripts rebuild the whole thing — the monthly refresh is
+                re-run, not rebuilt.</p>
+              </div>
+            </div>
 
-<section>
-  <h2>Experience &amp; credentials</h2>
-  <div class="creds">
-    <div class="cred">
-      <h3>Experience</h3>
-      <ul>
-        <li><strong>Data Analyst Intern</strong> — Novitech R&amp;D Pvt Ltd.
-        Power BI dashboards, trend analysis, full reporting life cycle.</li>
-        <li><strong>Web Development Intern</strong> — Codebind Technologies.
-        Full-stack CRUD applications, REST API testing in Postman.</li>
-      </ul>
-    </div>
-    <div class="cred">
-      <h3>Education</h3>
-      <ul>
-        <li><strong>B.Tech, Information Technology</strong> — Arunai Engineering
-        College, 2022–2026. CGPA 7.9 / 10.</li>
-        <li><strong>HSC</strong> — Mount Saint Joseph Matriculation HSS, 2020–2022.</li>
-      </ul>
-    </div>
-    <div class="cred">
-      <h3>Certifications</h3>
-      <ul>
-        <li><strong>Google Data Analytics</strong> Professional Certificate — Coursera</li>
-        <li><strong>Test Engineer</strong> — Infosys Foundation (ICT Academy)</li>
-        <li><strong>Java Programming</strong> — Udemy</li>
-      </ul>
-    </div>
-    <div class="cred">
-      <h3>Recognition</h3>
-      <ul>
-        <li><strong>Published</strong> — "Behaviour Based Cognitive Drift Detection
-        Framework for the Classroom Learning Environment", IJRTI, 2026</li>
-        <li><strong>First Prize</strong> — national hackathon, 2025</li>
-        <li><strong>Second Prize</strong> — national hackathon, 2024 (Smart Parking System)</li>
-      </ul>
+            <div class="case-links">
+              <a class="tlink" href="https://github.com/ASIFALI-N7777/Sales-Data-Analysis-using-Excel-Power-BI" target="_blank" rel="noopener">Repository ↗</a>
+            </div>
+          </article>
+
+          <!-- CASE 2 -->
+          <article class="case rv">
+            <div class="case-head">
+              <h3>Cognitive Drift Detection</h3>
+              <span class="pill">Published · IJRTI 2026</span>
+            </div>
+            <div class="stack">
+              <span class="tag">Machine Learning</span><span class="tag">Python</span>
+              <span class="tag">Learning Analytics</span>
+            </div>
+            <p class="claim">A system that flags a student's cognitive drift while it is still
+            recoverable — final year project, published as a peer-reviewed paper.</p>
+
+            <div class="beats">
+              <div class="beat">
+                <span class="bt">The gap</span>
+                <p>Academic decline gets noticed at assessment time, once the student has already
+                fallen behind. The behavioural signals precede it by weeks — <strong>they're in the
+                activity data, nobody is watching them.</strong></p>
+              </div>
+              <div class="beat">
+                <span class="bt">Approach</span>
+                <p>A web-based system that monitors learning behaviour and applies machine learning
+                classification to sort students into <strong>Normal, Early Drift and High
+                Drift</strong> — turning a continuous signal into three states a teacher can act on.</p>
+              </div>
+              <div class="beat">
+                <span class="bt">Delivered for teachers, not for me</span>
+                <p>The dashboard surfaces who crossed a threshold this week, so the output reads as
+                a name to check on rather than a model score.</p>
+              </div>
+            </div>
+
+            <div class="case-links">
+              <a class="tlink" href="https://github.com/ASIFALI-N7777/Cognitive_Drift_Learning_System" target="_blank" rel="noopener">Repository ↗</a>
+            </div>
+          </article>
+
+          <!-- CASE 3 -->
+          <article class="case rv">
+            <div class="case-head">
+              <h3>Smart Ration Distribution</h3>
+              <span class="pill">First Prize · National 2025</span>
+            </div>
+            <div class="stack">
+              <span class="tag">IoT</span><span class="tag">Automation</span>
+              <span class="tag">Public Systems</span>
+            </div>
+            <p class="claim">A digitised public distribution workflow that makes every ration
+            release traceable, and duplicate claims structurally impossible.</p>
+
+            <div class="beats">
+              <div class="beat">
+                <span class="bt">Approach</span>
+                <p>Ration is dispensed <strong>only after the beneficiary's ID card is scanned</strong> —
+                which removes the discretionary step where most leakage occurred. Every dispense
+                writes who, what, when and which shop.</p>
+              </div>
+              <div class="beat">
+                <span class="bt">Why duplicates fail</span>
+                <p>The entitlement is already marked against that beneficiary for the period, so a
+                second claim has nothing to draw against. <strong>Not a policy — a data
+                constraint.</strong></p>
+              </div>
+              <div class="beat">
+                <span class="bt">Recognition</span>
+                <p>First Prize at a national-level hackathon, 2025 — judged against entries from
+                across the country.</p>
+              </div>
+            </div>
+
+            <div class="case-links">
+              <a class="tlink" href="https://github.com/ASIFALI-N7777" target="_blank" rel="noopener">GitHub profile ↗</a>
+            </div>
+          </article>
+
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<div class="contact">
-  <h3>Let's talk</h3>
-  <p>I'm looking for a Data Analyst or Business Analyst role. Happy to walk through
-  any of these projects in detail — including the parts that did not work first time.</p>
-  <div class="links">
-    <a class="primary" href="mailto:asifali.n7777@gmail.com">asifali.n7777@gmail.com</a>
-    <a href="https://linkedin.com/in/asifali-n7777" target="_blank" rel="noopener">LinkedIn</a>
-    <a href="https://github.com/ASIFALI-N7777" target="_blank" rel="noopener">GitHub</a>
+<!-- ================= CAPABILITIES ================= -->
+<section class="sec" id="capabilities">
+  <div class="shell">
+    <div class="sec-in">
+      <div class="rail rv"><span class="lab">Capabilities</span>
+        <span class="rail-note">Tools, and the habits that decide how they get used.</span></div>
+
+      <div>
+        <h2 class="sh rv">What I work with</h2>
+        <p class="sec-lede rv">Listed by what I've actually shipped with, not by what I've
+        watched a tutorial on.</p>
+
+        <div class="caps">
+          <div class="cap rv">
+            <h3>Analysis &amp; BI</h3>
+            <p>Excel — Pivot Tables, Slicers, XLOOKUP, nested IF, SUMIFS, Power Query.
+            Power BI — DAX measures, data modelling, interactive dashboards.</p>
+          </div>
+          <div class="cap rv">
+            <h3>Data &amp; SQL</h3>
+            <p>SQL / MySQL — joins, aggregations, grouping. Data cleaning and validation,
+            ETL, exploratory analysis, KPI reporting.</p>
+          </div>
+          <div class="cap rv">
+            <h3>Programming</h3>
+            <p>Python, Java, PowerShell, HTML/CSS/JavaScript. Git and GitHub for version
+            control; Postman for API testing.</p>
+          </div>
+          <div class="cap rv">
+            <h3>Machine learning</h3>
+            <p>Supervised classification applied end to end in my final year project —
+            behavioural features through to a three-state prediction teachers can act on.</p>
+          </div>
+          <div class="cap rv">
+            <h3>AI-assisted delivery</h3>
+            <p>Claude and Claude Code for rapid prototyping, code review and documentation.
+            Faster drafts, same standard of proof before anything ships.</p>
+          </div>
+          <div class="cap rv">
+            <h3>How I work</h3>
+            <p>Auditable over clever. If a reviewer can't trace why a row was dropped, the
+            pipeline isn't done — however good the dashboard looks.</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+</section>
+
+<!-- ================= BACKGROUND ================= -->
+<section class="sec" id="background">
+  <div class="shell">
+    <div class="sec-in">
+      <div class="rail rv"><span class="lab">Background</span>
+        <span class="rail-note">Experience, education and recognition.</span></div>
+
+      <div>
+        <h2 class="sh rv">Background</h2>
+
+        <p class="sec-lede rv" style="margin-bottom:18px"><span class="lab">Experience</span></p>
+        <div class="rows" style="margin-bottom:34px">
+          <div class="row rv">
+            <span class="when">Internship · 1 mo</span>
+            <div>
+              <div class="what">Data Analyst — Novitech R&amp;D Pvt Ltd</div>
+              <p class="detail">Built Power BI dashboards and visual reports for business
+              stakeholders; worked the full reporting life cycle from cleaning through to
+              publishing, and standardised measures so recurring reports were refreshed rather
+              than rebuilt.</p>
+            </div>
+          </div>
+          <div class="row rv">
+            <span class="when">Internship · 1 mo</span>
+            <div>
+              <div class="what">Web Development — Codebind Technologies</div>
+              <p class="detail">Full-stack CRUD applications across front-end forms, back-end
+              logic and database operations; tested and debugged REST APIs in Postman.</p>
+            </div>
+          </div>
+        </div>
+
+        <p class="sec-lede rv" style="margin-bottom:18px"><span class="lab">Education</span></p>
+        <div class="rows" style="margin-bottom:34px">
+          <div class="row rv">
+            <span class="when">2022 – 2026</span>
+            <div>
+              <div class="what">B.Tech, Information Technology</div>
+              <p class="detail">Arunai Engineering College — CGPA 7.9 / 10</p>
+            </div>
+          </div>
+          <div class="row rv">
+            <span class="when">2020 – 2022</span>
+            <div>
+              <div class="what">Higher Secondary Certificate</div>
+              <p class="detail">Mount Saint Joseph Matriculation Higher Secondary School</p>
+            </div>
+          </div>
+        </div>
+
+        <p class="sec-lede rv" style="margin-bottom:18px"><span class="lab">Certifications &amp; recognition</span></p>
+        <div class="rows">
+          <div class="row rv">
+            <span class="when">Certified</span>
+            <div>
+              <div class="what">Google Data Analytics Professional Certificate</div>
+              <p class="detail">Coursera. Also: Test Engineer — Infosys Foundation (ICT Academy);
+              Java Programming — Udemy.</p>
+            </div>
+          </div>
+          <div class="row rv">
+            <span class="when">2026</span>
+            <div>
+              <div class="what">Published — IJRTI</div>
+              <p class="detail">“Behaviour Based Cognitive Drift Detection Framework for the
+              Classroom Learning Environment”, International Journal for Research Trends and
+              Innovation.</p>
+            </div>
+          </div>
+          <div class="row rv">
+            <span class="when">2025</span>
+            <div>
+              <div class="what">First Prize — national-level hackathon</div>
+              <p class="detail">Smart Ration Distribution System.</p>
+            </div>
+          </div>
+          <div class="row rv">
+            <span class="when">2024</span>
+            <div>
+              <div class="what">Second Prize — national tech hackathon</div>
+              <p class="detail">Smart Parking System — IoT and real-time occupancy detection.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section class="sec" id="contact">
+  <div class="shell">
+    <div class="contact-card rv">
+      <span class="lab">Open to Data Analyst / Business Analyst roles</span>
+      <h2 style="margin-top:14px">Let's talk about the messy dataset.</h2>
+      <p>Happy to walk through any of this in detail — including the parts that didn't work
+      first time, which are usually the more interesting half of the conversation.</p>
+      <div class="cta">
+        <button class="btn solid" id="copy" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+          asifali.n7777@gmail.com
+        </button>
+        <a class="btn" href="tel:+919944540149">+91 99445 40149</a>
+        <a class="btn" href="https://linkedin.com/in/asifali-n7777" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a class="btn" href="https://github.com/ASIFALI-N7777" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+      <span class="copy-note" id="copied" role="status" aria-live="polite"></span>
+    </div>
+  </div>
+</section>
+
+<div class="shell">
+  <footer>
+    <span>Asifali N — Data Analyst, Tamil Nadu</span>
+    <span><a href="#top">Back to top ↑</a></span>
+  </footer>
 </div>
 
-<footer>
-  <span>Asifali N — Data Analyst</span>
-  <span>+91 99445 40149</span>
-</footer>
+</main>
 
-</div>
+<script>
+(function(){
+  "use strict";
+
+  /* ---- theme toggle, persisted ---- */
+  var root = document.documentElement;
+  try{
+    var saved = localStorage.getItem("theme");
+    if(saved === "dark" || saved === "light") root.setAttribute("data-theme", saved);
+  }catch(e){}
+
+  function currentIsDark(){
+    var attr = root.getAttribute("data-theme");
+    if(attr) return attr === "dark";
+    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+
+  var btn = document.getElementById("theme");
+  if(btn){
+    btn.addEventListener("click", function(){
+      var next = currentIsDark() ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      try{ localStorage.setItem("theme", next); }catch(e){}
+    });
+  }
+
+  /* ---- copy email ---- */
+  var copyBtn = document.getElementById("copy");
+  var note = document.getElementById("copied");
+  if(copyBtn){
+    copyBtn.addEventListener("click", function(){
+      var addr = "asifali.n7777@gmail.com";
+      function done(ok){
+        if(!note) return;
+        note.textContent = ok ? "Copied to clipboard" : "Press Ctrl+C to copy";
+        note.classList.add("on");
+        setTimeout(function(){ note.classList.remove("on"); }, 2400);
+      }
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(addr).then(function(){ done(true); },
+                                                 function(){ done(false); });
+      } else { done(false); }
+    });
+  }
+
+  /* ---- reveal on scroll ---- */
+  var items = document.querySelectorAll(".rv");
+  var reduce = window.matchMedia &&
+               window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if(reduce || !("IntersectionObserver" in window)){
+    for(var i=0;i<items.length;i++) items[i].classList.add("in");
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){
+          en.target.classList.add("in");
+          io.unobserve(en.target);
+        }
+      });
+    }, { rootMargin:"0px 0px -8% 0px", threshold:0.06 });
+    for(var j=0;j<items.length;j++) io.observe(items[j]);
+  }
+
+  /* ---- scroll-spy on the top nav ---- */
+  var navLinks = Array.prototype.slice.call(
+                   document.querySelectorAll('.tnav a[href^="#"]'));
+  var targets = navLinks.map(function(a){
+    return document.getElementById(a.getAttribute("href").slice(1));
+  });
+
+  function spy(){
+    var best = -1, bestTop = -Infinity, probe = window.innerHeight * 0.28;
+    for(var i=0;i<targets.length;i++){
+      var t = targets[i];
+      if(!t) continue;
+      var top = t.getBoundingClientRect().top;
+      if(top <= probe && top > bestTop){ bestTop = top; best = i; }
+    }
+    for(var k=0;k<navLinks.length;k++){
+      if(k === best) navLinks[k].setAttribute("aria-current","true");
+      else navLinks[k].removeAttribute("aria-current");
+    }
+  }
+
+  var ticking = false;
+  function onScroll(){
+    if(ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(function(){ spy(); ticking = false; });
+  }
+  window.addEventListener("scroll", onScroll, { passive:true });
+  window.addEventListener("resize", onScroll, { passive:true });
+  spy();
+})();
+</script>
 </body>
 </html>
