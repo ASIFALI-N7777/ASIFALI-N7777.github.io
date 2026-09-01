@@ -78,12 +78,6 @@
   --flag:#9c4a2a;
   --flag-soft:#f2e5df;
 
-  /* chart marks - validated for CVD separation against this surface.
-     Light pair dE 9.6 (deutan); see scripts/validate_palette.js */
-  --mark-pos:#00845a;
-  --mark-neg:#c14a12;
-  --mark-mag:#00845a;
-  --mark-track:#e3ded2;
 
   --shadow-1:0 1px 2px rgba(26,29,33,.05);
   --shadow-2:0 1px 2px rgba(26,29,33,.05), 0 8px 24px -12px rgba(26,29,33,.16);
@@ -124,11 +118,6 @@
     --accent-soft:#1d2a26;
     --flag:#d08159;
     --flag-soft:#2b211c;
-    /* dark steps are selected, not flipped: dE 9.7 (deutan) on #14171a */
-    --mark-pos:#1f9670;
-    --mark-neg:#c95e26;
-    --mark-mag:#1f9670;
-    --mark-track:#252b31;
     --shadow-1:0 1px 2px rgba(0,0,0,.4);
     --shadow-2:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
   }
@@ -146,11 +135,6 @@
   --accent-soft:#1d2a26;
   --flag:#d08159;
   --flag-soft:#2b211c;
-  /* dark steps are selected, not flipped: dE 9.7 (deutan) on #14171a */
-  --mark-pos:#1f9670;
-  --mark-neg:#c95e26;
-  --mark-mag:#1f9670;
-  --mark-track:#252b31;
   --shadow-1:0 1px 2px rgba(0,0,0,.4);
   --shadow-2:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
 }
@@ -324,70 +308,30 @@ body.nav-open .drawer{transform:none;opacity:1;pointer-events:auto;visibility:vi
    HERO
    ═══════════════════════════════════════════════════════════════ */
 .hero{padding:clamp(48px,9vw,104px) 0 clamp(40px,6vw,68px)}
-.hero-grid{display:grid;gap:var(--s7);align-items:start}
-@media (min-width:1000px){
-  .hero-grid{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:var(--s8);align-items:center}
-}
+.hero-grid{display:block;max-width:none}
 .kicker{display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s5)}
 .kicker::after{content:"";flex:1;height:1px;background:var(--rule)}
 
 .thesis{
   font-family:var(--display);
-  font-size:clamp(32px,5.6vw,58px);
-  font-weight:600;line-height:1.06;letter-spacing:-.028em;
-  max-width:16ch;font-variation-settings:"opsz" 120;
+  font-size:clamp(34px,6vw,66px);
+  font-weight:600;line-height:1.04;letter-spacing:-.03em;
+  max-width:15ch;font-variation-settings:"opsz" 120;
 }
 .thesis em{font-style:normal;color:var(--accent)}
-.hero .sub{margin-top:var(--s5);max-width:var(--measure);color:var(--muted);line-height:1.68}
+.hero .sub{margin-top:var(--s5);max-width:58ch;color:var(--muted);line-height:1.66;font-size:1.04em}
 .hero .sub strong{color:var(--ink);font-weight:500}
 .who{
-  margin-top:var(--s6);padding-top:var(--s5);border-top:1px solid var(--rule);
+  margin-top:var(--s7);padding-top:var(--s5);border-top:1px solid var(--rule);
   display:flex;flex-wrap:wrap;gap:var(--s2) var(--s5);align-items:baseline;
 }
 .who .name{font-family:var(--display);font-size:1.06em;font-weight:600}
 .who .meta{font-family:var(--mono);font-size:12px;color:var(--muted)}
 .hero .cta{margin-top:var(--s5)}
-
-/* hero visual: the raw→clean transform this portfolio is actually about */
-.ledger-demo{
-  border:1px solid var(--rule);border-radius:var(--r4);overflow:hidden;
-  background:var(--surface);box-shadow:var(--shadow-2);
-}
-.ld-bar{
-  display:flex;align-items:center;gap:var(--s2);
-  padding:10px var(--s4);border-bottom:1px solid var(--rule);background:var(--ground);
-}
-.ld-dot{width:8px;height:8px;border-radius:50%;background:var(--rule-strong);opacity:.28}
-.ld-title{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--faint);margin-left:var(--s2)}
-.ld-rows{display:grid}
-.ld-row{
-  display:grid;grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr);
-  align-items:center;gap:var(--s2);
-  padding:11px var(--s4);border-bottom:1px solid var(--rule);
-  font-family:var(--mono);font-size:11.5px;
-}
-.ld-row:last-child{border-bottom:none}
-.ld-raw{color:var(--flag);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ld-arrow{color:var(--faint);text-align:center;font-size:11px}
-.ld-clean{color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ld-row.settled .ld-raw{text-decoration:line-through;opacity:.5}
-.ld-foot{
-  padding:10px var(--s4);background:var(--ground);border-top:1px solid var(--rule);
-  font-family:var(--mono);font-size:10.5px;color:var(--muted);
-  display:flex;justify-content:space-between;gap:var(--s3);
-}
-.ld-foot b{color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
-/* the reveal is a transition on opacity only — cheap, no layout work */
-.ld-row .ld-clean{opacity:0;transition:opacity .45s var(--ease)}
-.ld-row.settled .ld-clean{opacity:1}
-@media (prefers-reduced-motion:reduce){
-  .ld-row .ld-clean{opacity:1;transition:none}
-  .ld-row .ld-raw{text-decoration:line-through;opacity:.5}
-}
+.hero{padding-bottom:clamp(48px,7vw,84px)}
 
 /* ═══════════════════════════════════════════════════════════════
-   SECTIONS + LEDGER RAIL
+   SECTIONS + SECTION-LABEL RAIL
    ═══════════════════════════════════════════════════════════════ */
 .sec{border-top:1px solid var(--rule);padding:clamp(44px,6vw,80px) 0;scroll-margin-top:70px}
 #top{scroll-margin-top:0}
@@ -406,20 +350,6 @@ body.nav-open .drawer{transform:none;opacity:1;pointer-events:auto;visibility:vi
 @media (min-width:1000px){.rail-note{display:block}}
 h2.sh{font-size:clamp(23px,2.7vw,31px);letter-spacing:-.022em;margin-bottom:var(--s1)}
 .sec-lede{color:var(--muted);max-width:var(--measure);margin-bottom:var(--s5)}
-
-/* ═══════════════════════════════════════════════════════════════
-   FIGURES
-   ═══════════════════════════════════════════════════════════════ */
-.figs{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(126px,1fr));
-  border:1px solid var(--rule);border-radius:var(--r3);overflow:hidden;
-  background:var(--rule);gap:1px;
-}
-.fig{background:var(--ground);padding:var(--s4) 15px 15px}
-.fig .n{font-family:var(--display);font-size:clamp(25px,3.4vw,33px);font-weight:600;
-  letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
-.fig .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;
-  color:var(--muted);margin-top:var(--s2);line-height:1.45;text-transform:uppercase}
 
 /* ═══════════════════════════════════════════════════════════════
    ABOUT
@@ -530,76 +460,6 @@ td.fix code{font-family:var(--mono);font-size:11.5px;color:var(--accent);
 
 
 /* ═══════════════════════════════════════════════════════════════
-   FINDINGS / CHARTS
-   HTML bars rather than SVG: real text for screen readers, no
-   viewBox scaling to fight on small screens.
-   ═══════════════════════════════════════════════════════════════ */
-.findings{
-  margin:var(--s5) 0;padding:var(--s5);border:1px solid var(--rule);
-  border-radius:var(--r4);background:var(--surface);
-}
-.findings .fnote{
-  font-size:.88em;color:var(--faint);max-width:var(--measure);
-  margin:var(--s2) 0 var(--s5);line-height:1.55;
-}
-.findings .fnote code,.findings .insight code{
-  font-family:var(--mono);font-size:.9em;color:var(--muted);
-  background:var(--ground);padding:1px 5px;border-radius:3px;
-}
-.chart{margin:0 0 var(--s5)}
-.chart figcaption{display:flex;flex-direction:column;gap:2px;margin-bottom:var(--s3)}
-.chart .ct{font-weight:600;font-size:.98em}
-.chart .cs{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;
-  text-transform:uppercase;color:var(--faint)}
-
-.bars{display:grid;gap:6px}
-.brow{
-  display:grid;grid-template-columns:106px minmax(0,1fr) 74px;
-  align-items:center;gap:var(--s3);
-}
-.bl{font-size:12.5px;color:var(--muted);overflow-wrap:anywhere}
-.track{position:relative;display:block;height:22px;background:var(--mark-track);
-  border-radius:3px;overflow:hidden}
-.fill{position:absolute;top:0;bottom:0;display:block;
-  transition:filter .18s var(--ease)}
-/* 4px rounded data-end, square where it meets the baseline */
-.fill.pos{background:var(--mark-pos);border-radius:0 4px 4px 0}
-.fill.neg{background:var(--mark-neg);border-radius:4px 0 0 4px}
-.fill.mag{background:var(--mark-mag);border-radius:0 4px 4px 0;left:0}
-.brow:hover .fill{filter:brightness(1.12)}
-.zero{position:absolute;left:20.9%;top:0;bottom:0;width:1px;
-  background:var(--rule-strong);opacity:.35;z-index:1}
-.bv{font-family:var(--mono);font-size:12px;text-align:right;
-  font-variant-numeric:tabular-nums;color:var(--ink)}
-.bv.pos{color:var(--mark-pos)}
-.bv.neg{color:var(--mark-neg)}
-
-.insight{font-size:.94em;color:var(--muted);max-width:var(--measure);
-  margin:var(--s3) 0 var(--s5);line-height:1.6}
-.insight strong{color:var(--ink);font-weight:500}
-.insight:last-child{margin-bottom:0}
-
-.tally{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));
-  gap:var(--s3);margin:var(--s3) 0}
-.ti{display:grid;gap:2px}
-.tn{font-family:var(--display);font-size:22px;font-weight:600;
-  letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-.tl{font-family:var(--mono);font-size:10px;letter-spacing:.06em;
-  text-transform:uppercase;color:var(--faint)}
-.reasons{display:grid;gap:5px;margin:var(--s3) 0}
-.reasons li{font-size:13px;color:var(--muted);display:flex;gap:var(--s3);align-items:baseline}
-.rn{font-family:var(--mono);font-size:12px;color:var(--mark-neg);
-  font-variant-numeric:tabular-nums;min-width:34px;text-align:right;flex:none}
-
-@media (max-width:520px){
-  .brow{grid-template-columns:84px minmax(0,1fr) 66px;gap:var(--s2)}
-  .bl{font-size:11.5px}
-  .bv{font-size:11px}
-  .findings{padding:var(--s4)}
-}
-@media (prefers-reduced-motion:reduce){.fill{transition:none}}
-
-/* ═══════════════════════════════════════════════════════════════
    TIMELINE / ROWS
    ═══════════════════════════════════════════════════════════════ */
 .rows{display:grid;gap:0}
@@ -689,7 +549,7 @@ footer a:hover{color:var(--ink)}
 }
 
 @media print{
-  .topbar,.drawer,.cta,.tbtn,.skip,.case-links,.contact-grid,.ledger-demo{display:none}
+  .topbar,.drawer,.cta,.tbtn,.skip,.case-links,.contact-grid{display:none}
   body{background:#fff;color:#000;font-size:10.5pt}
   .sec{padding:16pt 0;border-color:#ccc}
   .sec-in{grid-template-columns:1fr}
@@ -755,7 +615,6 @@ footer a:hover{color:var(--ink)}
 <header class="hero">
   <div class="shell">
     <div class="hero-grid">
-      <div>
         <div class="kicker rv"><span class="lab">Data Analyst · Portfolio 2026</span></div>
         <h1 class="thesis rv">Numbers you can <em>audit</em>, not just read.</h1>
         <p class="sub rv">Most analysis asks you to trust the output. I build the other
@@ -778,49 +637,9 @@ footer a:hover{color:var(--ink)}
           <a class="btn" href="https://github.com/ASIFALI-N7777" target="_blank" rel="noopener">GitHub</a>
           <a class="btn" href="https://linkedin.com/in/asifali-n7777" target="_blank" rel="noopener">LinkedIn</a>
         </div>
-      </div>
-
-      <!-- decorative, but it shows the actual transform the work performs -->
-      <div class="ledger-demo rv" aria-hidden="true">
-        <div class="ld-bar">
-          <span class="ld-dot"></span><span class="ld-dot"></span><span class="ld-dot"></span>
-          <span class="ld-title">Clean_Data · live formulas</span>
-        </div>
-        <div class="ld-rows" id="ld-rows">
-          <div class="ld-row"><span class="ld-raw">"  north  "</span><span class="ld-arrow">→</span><span class="ld-clean">North</span></div>
-          <div class="ld-row"><span class="ld-raw">"INR 1,234.50"</span><span class="ld-arrow">→</span><span class="ld-clean">1234.50</span></div>
-          <div class="ld-row"><span class="ld-raw">"11/03/2024"</span><span class="ld-arrow">→</span><span class="ld-clean">2024-03-11</span></div>
-          <div class="ld-row"><span class="ld-raw">"Nth"</span><span class="ld-arrow">→</span><span class="ld-clean">North</span></div>
-          <div class="ld-row"><span class="ld-raw">unit price = ∅</span><span class="ld-arrow">→</span><span class="ld-clean">XLOOKUP(master)</span></div>
-          <div class="ld-row"><span class="ld-raw">duplicate posting</span><span class="ld-arrow">→</span><span class="ld-clean">excluded, reason kept</span></div>
-        </div>
-        <div class="ld-foot">
-          <span>8 defect classes</span>
-          <span>every step <b>traceable</b></span>
-        </div>
-      </div>
     </div>
   </div>
 </header>
-
-<!-- ══════════ FIGURES ══════════ -->
-<section class="sec" aria-label="Key figures">
-  <div class="shell">
-    <div class="sec-in">
-      <div class="rail rv"><span class="lab">Ledger</span>
-        <span class="rail-note">The record, in round numbers.</span></div>
-      <div class="rv">
-        <div class="figs">
-          <div class="fig"><div class="n">10,000+</div><div class="l">Order lines cleaned</div></div>
-          <div class="fig"><div class="n">8</div><div class="l">Defect classes resolved</div></div>
-          <div class="fig"><div class="n">2</div><div class="l">Internships</div></div>
-          <div class="fig"><div class="n">1</div><div class="l">Paper published</div></div>
-          <div class="fig"><div class="n">2</div><div class="l">National hackathon prizes</div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- ══════════ ABOUT ══════════ -->
 <section class="sec" id="about">
@@ -836,9 +655,9 @@ footer a:hover{color:var(--ink)}
         published paper.</strong></p>
         <p class="rv">The work I care about sits in Excel, Power BI and SQL — cleaning
         records, modelling them, and building dashboards people use to decide something.
-        My sales pipeline project is the clearest example: 10,000+ deliberately messy order
-        lines, eight classes of defect, and a cleaning layer written entirely as live
-        formulas so <strong>every correction can be inspected rather than trusted.</strong></p>
+        My sales pipeline project is the clearest example: a cleaning layer written
+        entirely as live formulas, so <strong>every correction can be inspected rather
+        than trusted.</strong></p>
         <p class="rv">Alongside that I've built full-stack CRUD applications and tested REST
         APIs, and I use Claude to move faster through the drafting and review parts of a
         build. <strong>I'm a fresher, and I'd rather be judged on the work than on a job
@@ -939,8 +758,8 @@ footer a:hover{color:var(--ink)}
               <span class="tag">Excel</span><span class="tag">Power BI / DAX</span>
               <span class="tag">Python</span><span class="tag">PowerShell</span><span class="tag">SQL</span>
             </div>
-            <p class="claim">An end-to-end pipeline that turns a deliberately dirty
-            10,000-row sales extract into a KPI dashboard you can defend line by line.</p>
+            <p class="claim">An end-to-end pipeline that turns a messy sales extract into a KPI
+            dashboard you can defend line by line.</p>
 
             <div class="beats">
               <div class="beat">
@@ -972,114 +791,12 @@ footer a:hover{color:var(--ink)}
               </div>
             </div>
 
-            <div class="findings">
-              <p class="lab">What the data says</p>
-
-              <p class="fnote">Every figure below is computed from the project's own
-              dataset by <code>compute_facts.py</code>, which re-applies the workbook's
-              inclusion rules in Python. The extract is synthetic — generated with
-              deliberate defects so the cleaning layer has something real to catch — so
-              read these as the analysis working, not as one company's trading results.</p>
-
-              <!-- ── chart 1 : the finding ── -->
-              <figure class="chart">
-                <figcaption>
-                  <span class="ct">Margin by category</span>
-                  <span class="cs">One category sells at a loss</span>
-                </figcaption>
-
-                <div class="bars diverge" role="img"
-                     aria-label="Margin by category. Technology plus 19.7 percent. Office Supplies plus 15.2 percent. Furniture minus 5.2 percent.">
-                  <div class="brow">
-                    <span class="bl">Technology</span>
-                    <span class="track"><span class="zero"></span>
-                      <span class="fill pos" style="left:20.9%;width:79.1%"></span></span>
-                    <span class="bv pos">+19.7%</span>
-                  </div>
-                  <div class="brow">
-                    <span class="bl">Office Supplies</span>
-                    <span class="track"><span class="zero"></span>
-                      <span class="fill pos" style="left:20.9%;width:61.0%"></span></span>
-                    <span class="bv pos">+15.2%</span>
-                  </div>
-                  <div class="brow">
-                    <span class="bl">Furniture</span>
-                    <span class="track"><span class="zero"></span>
-                      <span class="fill neg" style="left:0;width:20.9%"></span></span>
-                    <span class="bv neg">−5.2%</span>
-                  </div>
-                </div>
-              </figure>
-
-              <p class="insight"><strong>Furniture is the second-largest category by
-              revenue (₹24.77 Cr) and it loses money on every sale.</strong> Overall
-              margin reads a healthy 12.5%, which is exactly the problem — Technology's
-              19.7% is subsidising Furniture's −5.2%, so the headline number hides the
-              category that needs a pricing or supplier decision. This is what the loss
-              watchlist exists to surface.</p>
-
-              <!-- ── chart 2 : where the revenue sits ── -->
-              <figure class="chart">
-                <figcaption>
-                  <span class="ct">Revenue by region</span>
-                  <span class="cs">After merging four alias spellings into four regions</span>
-                </figcaption>
-
-                <div class="bars" role="img"
-                     aria-label="Revenue by region in crore rupees. West 31.25. North 22.64. South 21.80. East 11.97.">
-                  <div class="brow">
-                    <span class="bl">West</span>
-                    <span class="track"><span class="fill mag" style="width:100%"></span></span>
-                    <span class="bv">₹31.25 Cr</span>
-                  </div>
-                  <div class="brow">
-                    <span class="bl">North</span>
-                    <span class="track"><span class="fill mag" style="width:72.4%"></span></span>
-                    <span class="bv">₹22.64 Cr</span>
-                  </div>
-                  <div class="brow">
-                    <span class="bl">South</span>
-                    <span class="track"><span class="fill mag" style="width:69.8%"></span></span>
-                    <span class="bv">₹21.80 Cr</span>
-                  </div>
-                  <div class="brow">
-                    <span class="bl">East</span>
-                    <span class="track"><span class="fill mag" style="width:38.3%"></span></span>
-                    <span class="bv">₹11.97 Cr</span>
-                  </div>
-                </div>
-              </figure>
-
-              <p class="insight">Before cleaning, these four regions appeared as eight —
-              <code>Nth</code>, <code>W.</code>, <code>Sth</code> and <code>E.</code> each
-              split revenue away from its real region. <strong>Ranking regions on the raw
-              extract would have put West and North in the wrong order.</strong></p>
-
-              <!-- ── the audit trail ── -->
-              <p class="lab" style="margin-top:var(--s5)">What the cleaning layer removed</p>
-              <div class="tally">
-                <div class="ti"><span class="tn">11,995</span><span class="tl">rows in</span></div>
-                <div class="ti"><span class="tn">11,047</span><span class="tl">rows kept</span></div>
-                <div class="ti"><span class="tn">948</span><span class="tl">excluded (7.9%)</span></div>
-              </div>
-              <ul class="reasons">
-                <li><span class="rn">340</span> duplicate postings — same product twice on one order</li>
-                <li><span class="rn">241</span> returned orders</li>
-                <li><span class="rn">212</span> cancelled orders</li>
-                <li><span class="rn">155</span> zero or negative quantity</li>
-              </ul>
-              <p class="insight">Each exclusion keeps its reason in the row, so the count
-              reconciles: <strong>340 + 241 + 212 + 155 = 948.</strong> Nothing disappears
-              silently — which is the whole argument for building the cleaning layer in
-              formulas rather than hiding it in code.</p>
-            </div>
-
             <details class="more">
-              <summary><span class="chev">›</span> The eight defect classes, and how each was handled</summary>
+              <summary><span class="chev">›</span> How the cleaning layer handles a dirty extract</summary>
               <div class="inner">
                 <div class="tablewrap">
                   <table>
-                    <caption>Raw extract → clean layer</caption>
+                    <caption>Defect in the source, and the formula that resolves it</caption>
                     <thead><tr><th scope="col">Defect</th><th scope="col">Resolution</th></tr></thead>
                     <tbody>
                       <tr><td class="defect">Duplicate postings</td><td class="fix"><code>MATCH</code> first-occurrence test drives a duplicate flag</td></tr>
@@ -1484,23 +1201,6 @@ footer a:hover{color:var(--ink)}
       });
     }, { rootMargin:"0px 0px -8% 0px", threshold:0.06 });
     for(var j=0;j<items.length;j++) io.observe(items[j]);
-  }
-
-  /* ---------- hero ledger: rows settle one after another ---------- */
-  var ldRows = document.querySelectorAll("#ld-rows .ld-row");
-  if(reduce){
-    ldRows.forEach(function(r){ r.classList.add("settled"); });
-  } else if(ldRows.length){
-    var lio = new IntersectionObserver(function(entries){
-      entries.forEach(function(en){
-        if(!en.isIntersecting) return;
-        lio.disconnect();
-        ldRows.forEach(function(r, k){
-          setTimeout(function(){ r.classList.add("settled"); }, 260 + k * 150);
-        });
-      });
-    }, { threshold:0.3 });
-    lio.observe(document.getElementById("ld-rows"));
   }
 
   /* ---------- scroll-spy across both navs ---------- */
