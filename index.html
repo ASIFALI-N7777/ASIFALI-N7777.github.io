@@ -78,6 +78,13 @@
   --flag:#9c4a2a;
   --flag-soft:#f2e5df;
 
+  /* chart marks - validated for CVD separation against this surface.
+     Light pair dE 9.6 (deutan); see scripts/validate_palette.js */
+  --mark-pos:#00845a;
+  --mark-neg:#c14a12;
+  --mark-mag:#00845a;
+  --mark-track:#e3ded2;
+
   --shadow-1:0 1px 2px rgba(26,29,33,.05);
   --shadow-2:0 1px 2px rgba(26,29,33,.05), 0 8px 24px -12px rgba(26,29,33,.16);
 
@@ -117,6 +124,11 @@
     --accent-soft:#1d2a26;
     --flag:#d08159;
     --flag-soft:#2b211c;
+    /* dark steps are selected, not flipped: dE 9.7 (deutan) on #14171a */
+    --mark-pos:#1f9670;
+    --mark-neg:#c95e26;
+    --mark-mag:#1f9670;
+    --mark-track:#252b31;
     --shadow-1:0 1px 2px rgba(0,0,0,.4);
     --shadow-2:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
   }
@@ -134,6 +146,11 @@
   --accent-soft:#1d2a26;
   --flag:#d08159;
   --flag-soft:#2b211c;
+  /* dark steps are selected, not flipped: dE 9.7 (deutan) on #14171a */
+  --mark-pos:#1f9670;
+  --mark-neg:#c95e26;
+  --mark-mag:#1f9670;
+  --mark-track:#252b31;
   --shadow-1:0 1px 2px rgba(0,0,0,.4);
   --shadow-2:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
 }
@@ -511,6 +528,77 @@ td.fix code{font-family:var(--mono);font-size:11.5px;color:var(--accent);
 .tlink:hover .arw{transform:translate(2px,-2px)}
 @media (prefers-reduced-motion:reduce){.tlink .arw{transition:none}}
 
+
+/* ═══════════════════════════════════════════════════════════════
+   FINDINGS / CHARTS
+   HTML bars rather than SVG: real text for screen readers, no
+   viewBox scaling to fight on small screens.
+   ═══════════════════════════════════════════════════════════════ */
+.findings{
+  margin:var(--s5) 0;padding:var(--s5);border:1px solid var(--rule);
+  border-radius:var(--r4);background:var(--surface);
+}
+.findings .fnote{
+  font-size:.88em;color:var(--faint);max-width:var(--measure);
+  margin:var(--s2) 0 var(--s5);line-height:1.55;
+}
+.findings .fnote code,.findings .insight code{
+  font-family:var(--mono);font-size:.9em;color:var(--muted);
+  background:var(--ground);padding:1px 5px;border-radius:3px;
+}
+.chart{margin:0 0 var(--s5)}
+.chart figcaption{display:flex;flex-direction:column;gap:2px;margin-bottom:var(--s3)}
+.chart .ct{font-weight:600;font-size:.98em}
+.chart .cs{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--faint)}
+
+.bars{display:grid;gap:6px}
+.brow{
+  display:grid;grid-template-columns:106px minmax(0,1fr) 74px;
+  align-items:center;gap:var(--s3);
+}
+.bl{font-size:12.5px;color:var(--muted);overflow-wrap:anywhere}
+.track{position:relative;display:block;height:22px;background:var(--mark-track);
+  border-radius:3px;overflow:hidden}
+.fill{position:absolute;top:0;bottom:0;display:block;
+  transition:filter .18s var(--ease)}
+/* 4px rounded data-end, square where it meets the baseline */
+.fill.pos{background:var(--mark-pos);border-radius:0 4px 4px 0}
+.fill.neg{background:var(--mark-neg);border-radius:4px 0 0 4px}
+.fill.mag{background:var(--mark-mag);border-radius:0 4px 4px 0;left:0}
+.brow:hover .fill{filter:brightness(1.12)}
+.zero{position:absolute;left:20.9%;top:0;bottom:0;width:1px;
+  background:var(--rule-strong);opacity:.35;z-index:1}
+.bv{font-family:var(--mono);font-size:12px;text-align:right;
+  font-variant-numeric:tabular-nums;color:var(--ink)}
+.bv.pos{color:var(--mark-pos)}
+.bv.neg{color:var(--mark-neg)}
+
+.insight{font-size:.94em;color:var(--muted);max-width:var(--measure);
+  margin:var(--s3) 0 var(--s5);line-height:1.6}
+.insight strong{color:var(--ink);font-weight:500}
+.insight:last-child{margin-bottom:0}
+
+.tally{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));
+  gap:var(--s3);margin:var(--s3) 0}
+.ti{display:grid;gap:2px}
+.tn{font-family:var(--display);font-size:22px;font-weight:600;
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.tl{font-family:var(--mono);font-size:10px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--faint)}
+.reasons{display:grid;gap:5px;margin:var(--s3) 0}
+.reasons li{font-size:13px;color:var(--muted);display:flex;gap:var(--s3);align-items:baseline}
+.rn{font-family:var(--mono);font-size:12px;color:var(--mark-neg);
+  font-variant-numeric:tabular-nums;min-width:34px;text-align:right;flex:none}
+
+@media (max-width:520px){
+  .brow{grid-template-columns:84px minmax(0,1fr) 66px;gap:var(--s2)}
+  .bl{font-size:11.5px}
+  .bv{font-size:11px}
+  .findings{padding:var(--s4)}
+}
+@media (prefers-reduced-motion:reduce){.fill{transition:none}}
+
 /* ═══════════════════════════════════════════════════════════════
    TIMELINE / ROWS
    ═══════════════════════════════════════════════════════════════ */
@@ -882,6 +970,108 @@ footer a:hover{color:var(--ink)}
                 on a shared cache; three slicers; and a <strong>loss watchlist</strong>
                 showing where margin is leaking. The monthly refresh is re-run, not rebuilt.</p>
               </div>
+            </div>
+
+            <div class="findings">
+              <p class="lab">What the data says</p>
+
+              <p class="fnote">Every figure below is computed from the project's own
+              dataset by <code>compute_facts.py</code>, which re-applies the workbook's
+              inclusion rules in Python. The extract is synthetic — generated with
+              deliberate defects so the cleaning layer has something real to catch — so
+              read these as the analysis working, not as one company's trading results.</p>
+
+              <!-- ── chart 1 : the finding ── -->
+              <figure class="chart">
+                <figcaption>
+                  <span class="ct">Margin by category</span>
+                  <span class="cs">One category sells at a loss</span>
+                </figcaption>
+
+                <div class="bars diverge" role="img"
+                     aria-label="Margin by category. Technology plus 19.7 percent. Office Supplies plus 15.2 percent. Furniture minus 5.2 percent.">
+                  <div class="brow">
+                    <span class="bl">Technology</span>
+                    <span class="track"><span class="zero"></span>
+                      <span class="fill pos" style="left:20.9%;width:79.1%"></span></span>
+                    <span class="bv pos">+19.7%</span>
+                  </div>
+                  <div class="brow">
+                    <span class="bl">Office Supplies</span>
+                    <span class="track"><span class="zero"></span>
+                      <span class="fill pos" style="left:20.9%;width:61.0%"></span></span>
+                    <span class="bv pos">+15.2%</span>
+                  </div>
+                  <div class="brow">
+                    <span class="bl">Furniture</span>
+                    <span class="track"><span class="zero"></span>
+                      <span class="fill neg" style="left:0;width:20.9%"></span></span>
+                    <span class="bv neg">−5.2%</span>
+                  </div>
+                </div>
+              </figure>
+
+              <p class="insight"><strong>Furniture is the second-largest category by
+              revenue (₹24.77 Cr) and it loses money on every sale.</strong> Overall
+              margin reads a healthy 12.5%, which is exactly the problem — Technology's
+              19.7% is subsidising Furniture's −5.2%, so the headline number hides the
+              category that needs a pricing or supplier decision. This is what the loss
+              watchlist exists to surface.</p>
+
+              <!-- ── chart 2 : where the revenue sits ── -->
+              <figure class="chart">
+                <figcaption>
+                  <span class="ct">Revenue by region</span>
+                  <span class="cs">After merging four alias spellings into four regions</span>
+                </figcaption>
+
+                <div class="bars" role="img"
+                     aria-label="Revenue by region in crore rupees. West 31.25. North 22.64. South 21.80. East 11.97.">
+                  <div class="brow">
+                    <span class="bl">West</span>
+                    <span class="track"><span class="fill mag" style="width:100%"></span></span>
+                    <span class="bv">₹31.25 Cr</span>
+                  </div>
+                  <div class="brow">
+                    <span class="bl">North</span>
+                    <span class="track"><span class="fill mag" style="width:72.4%"></span></span>
+                    <span class="bv">₹22.64 Cr</span>
+                  </div>
+                  <div class="brow">
+                    <span class="bl">South</span>
+                    <span class="track"><span class="fill mag" style="width:69.8%"></span></span>
+                    <span class="bv">₹21.80 Cr</span>
+                  </div>
+                  <div class="brow">
+                    <span class="bl">East</span>
+                    <span class="track"><span class="fill mag" style="width:38.3%"></span></span>
+                    <span class="bv">₹11.97 Cr</span>
+                  </div>
+                </div>
+              </figure>
+
+              <p class="insight">Before cleaning, these four regions appeared as eight —
+              <code>Nth</code>, <code>W.</code>, <code>Sth</code> and <code>E.</code> each
+              split revenue away from its real region. <strong>Ranking regions on the raw
+              extract would have put West and North in the wrong order.</strong></p>
+
+              <!-- ── the audit trail ── -->
+              <p class="lab" style="margin-top:var(--s5)">What the cleaning layer removed</p>
+              <div class="tally">
+                <div class="ti"><span class="tn">11,995</span><span class="tl">rows in</span></div>
+                <div class="ti"><span class="tn">11,047</span><span class="tl">rows kept</span></div>
+                <div class="ti"><span class="tn">948</span><span class="tl">excluded (7.9%)</span></div>
+              </div>
+              <ul class="reasons">
+                <li><span class="rn">340</span> duplicate postings — same product twice on one order</li>
+                <li><span class="rn">241</span> returned orders</li>
+                <li><span class="rn">212</span> cancelled orders</li>
+                <li><span class="rn">155</span> zero or negative quantity</li>
+              </ul>
+              <p class="insight">Each exclusion keeps its reason in the row, so the count
+              reconciles: <strong>340 + 241 + 212 + 155 = 948.</strong> Nothing disappears
+              silently — which is the whole argument for building the cleaning layer in
+              formulas rather than hiding it in code.</p>
             </div>
 
             <details class="more">
