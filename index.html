@@ -57,10 +57,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;450;500;600&display=swap">
 <style>
-/* ============================================================
-   TOKENS — light is the base; dark redefines tokens only.
-   ============================================================ */
+/* ═══════════════════════════════════════════════════════════════
+   DESIGN TOKENS
+   Light is the base. Dark redefines tokens only — never components.
+   ═══════════════════════════════════════════════════════════════ */
 :root{
+  /* ground + ink */
   --ground:#f6f4ef;
   --surface:#efece4;
   --surface-2:#e7e3d9;
@@ -69,19 +71,37 @@
   --faint:#8b9099;
   --rule:#ddd7ca;
   --rule-strong:#1a1d21;
+
+  /* semantic: green = reconciled, clay = flagged. Not decoration. */
   --accent:#2f6a56;
   --accent-soft:#e3ece7;
   --flag:#9c4a2a;
-  --shadow:0 1px 2px rgba(26,29,33,.05), 0 8px 24px -12px rgba(26,29,33,.14);
+  --flag-soft:#f2e5df;
 
+  --shadow-1:0 1px 2px rgba(26,29,33,.05);
+  --shadow-2:0 1px 2px rgba(26,29,33,.05), 0 8px 24px -12px rgba(26,29,33,.16);
+
+  /* type */
   --display:"Fraunces",Georgia,"Times New Roman",serif;
   --body:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;
 
+  /* space scale (4px base) */
+  --s1:4px;  --s2:8px;  --s3:12px; --s4:16px; --s5:24px;
+  --s6:32px; --s7:48px; --s8:64px; --s9:96px;
+
+  /* radius scale */
+  --r1:4px; --r2:6px; --r3:8px; --r4:12px;
+
+  /* layout */
   --measure:63ch;
   --rail:186px;
   --gutter:clamp(20px,5vw,40px);
   --maxw:1180px;
+  --maxw-wide:1440px;
+  --bar:58px;
+
+  --ease:cubic-bezier(.2,.6,.3,1);
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
@@ -96,7 +116,9 @@
     --accent:#6bab92;
     --accent-soft:#1d2a26;
     --flag:#d08159;
-    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+    --flag-soft:#2b211c;
+    --shadow-1:0 1px 2px rgba(0,0,0,.4);
+    --shadow-2:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
   }
 }
 :root[data-theme="dark"]{
@@ -111,12 +133,14 @@
   --accent:#6bab92;
   --accent-soft:#1d2a26;
   --flag:#d08159;
-  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  --flag-soft:#2b211c;
+  --shadow-1:0 1px 2px rgba(0,0,0,.4);
+  --shadow-2:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
 }
 
-/* ============================================================
+/* ═══════════════════════════════════════════════════════════════
    BASE
-   ============================================================ */
+   ═══════════════════════════════════════════════════════════════ */
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
@@ -128,62 +152,53 @@ body{
   font-family:var(--body);
   font-size:clamp(15.5px,.34vw + 14.6px,17px);
   line-height:1.62;
-  font-weight:400;
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
 }
+body.nav-open{overflow:hidden}
 
 h1,h2,h3,h4{font-family:var(--display);font-weight:600;line-height:1.1;
   letter-spacing:-.018em;text-wrap:balance;margin:0}
 p{margin:0}
 a{color:inherit}
 ul{margin:0;padding:0;list-style:none}
+button{font:inherit}
 
 ::selection{background:var(--accent);color:var(--ground)}
-
-:focus-visible{
-  outline:2px solid var(--accent);
-  outline-offset:3px;
-  border-radius:3px;
-}
-
-.skip{
-  position:absolute;top:0;left:0;z-index:100;
-  clip-path:inset(50%);width:1px;height:1px;overflow:hidden;
-  background:var(--ink);color:var(--ground);
-  padding:12px 18px;font-family:var(--mono);font-size:13px;
-  text-decoration:none;border-radius:0 0 4px 0;white-space:nowrap;
-}
-.skip:focus{clip-path:none;width:auto;height:auto;overflow:visible}
-
-/* mono utility label */
-.lab{
-  font-family:var(--mono);
-  font-size:11px;
-  letter-spacing:.13em;
-  text-transform:uppercase;
-  color:var(--faint);
-  font-weight:500;
-}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:var(--r1)}
 
 .shell{max-width:var(--maxw);margin:0 auto;padding:0 var(--gutter);min-width:0}
 .sec-in>*,.caps>*,.rows>*,.work>*,.cap>*,.row>*{min-width:0}
 img,svg,video{max-width:100%;height:auto}
 a,p,h1,h2,h3,li,td{overflow-wrap:break-word}
 
-/* ============================================================
-   TOP BAR
-   ============================================================ */
+.skip{
+  position:absolute;top:0;left:0;z-index:100;
+  clip-path:inset(50%);width:1px;height:1px;overflow:hidden;
+  background:var(--ink);color:var(--ground);
+  padding:var(--s3) var(--s5);font-family:var(--mono);font-size:13px;
+  text-decoration:none;border-radius:0 0 var(--r1) 0;white-space:nowrap;
+}
+.skip:focus{clip-path:none;width:auto;height:auto;overflow:visible}
+
+.lab{
+  font-family:var(--mono);font-size:11px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--faint);font-weight:500;
+}
+.sr{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden}
+
+/* ═══════════════════════════════════════════════════════════════
+   TOP BAR + MOBILE DRAWER
+   ═══════════════════════════════════════════════════════════════ */
 .topbar{
   position:sticky;top:0;z-index:40;
   background:color-mix(in srgb, var(--ground) 88%, transparent);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   border-bottom:1px solid var(--rule);
 }
 .topbar-in{
   max-width:var(--maxw);margin:0 auto;padding:0 var(--gutter);
-  height:58px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  height:var(--bar);display:flex;align-items:center;justify-content:space-between;gap:var(--s4);
 }
 .mark{
   font-family:var(--mono);font-size:12.5px;font-weight:500;
@@ -192,42 +207,40 @@ a,p,h1,h2,h3,li,td{overflow-wrap:break-word}
   flex:none;display:inline-flex;align-items:center;min-height:44px;
 }
 .mark span{color:var(--faint)}
-@media (max-width:560px){
+/* the descriptor is the first thing to go when the bar runs out of room */
+@media (max-width:620px){
   .mark span{display:none}
-  .topbar-in{gap:10px}
+  .topbar-in{gap:var(--s3)}
 }
-.topbar-right{display:flex;align-items:center;gap:6px;min-width:0;flex:1;justify-content:flex-end}
+.topbar-right{display:flex;align-items:center;gap:var(--s2);min-width:0}
 
-.tnav{
-  display:flex;gap:2px;min-width:0;
-  overflow-x:auto;overscroll-behavior-x:contain;
-  scrollbar-width:none;-ms-overflow-style:none;
-  -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 18px),transparent);
-          mask-image:linear-gradient(90deg,#000 calc(100% - 18px),transparent);
-}
-@media (min-width:820px){
-  .tnav{-webkit-mask-image:none;mask-image:none;overflow:visible}
-}
-.tnav::-webkit-scrollbar{display:none}
+/* desktop nav */
+.tnav{display:none;gap:2px}
+@media (min-width:900px){.tnav{display:flex}}
 .tnav a{
   font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;
   text-transform:uppercase;color:var(--muted);text-decoration:none;
-  padding:7px 11px;border-radius:4px;transition:color .18s,background .18s;
-  white-space:nowrap;display:inline-flex;align-items:center;
+  padding:var(--s2) var(--s3);border-radius:var(--r1);
+  transition:color .18s var(--ease),background .18s var(--ease);
+  white-space:nowrap;display:inline-flex;align-items:center;position:relative;
 }
 .tnav a:hover{color:var(--ink);background:var(--surface)}
 .tnav a[aria-current="true"]{color:var(--accent)}
+.tnav a[aria-current="true"]::after{
+  content:"";position:absolute;left:var(--s3);right:var(--s3);bottom:2px;
+  height:1.5px;background:var(--accent);border-radius:2px;
+}
 
+/* icon buttons */
 .tbtn{
   appearance:none;border:1px solid var(--rule);background:transparent;flex:none;
-  color:var(--muted);width:34px;height:34px;border-radius:6px;
+  color:var(--muted);width:38px;height:38px;border-radius:var(--r2);
   display:grid;place-items:center;cursor:pointer;
-  transition:color .18s,border-color .18s,background .18s;
+  transition:color .18s var(--ease),border-color .18s var(--ease),background .18s var(--ease);
 }
 .tbtn:hover{color:var(--ink);border-color:var(--rule-strong);background:var(--surface)}
-.tbtn svg{width:15px;height:15px;grid-area:1/1}
-/* icon visibility is matched at .tbtn-descendant specificity so the sizing
-   rule above cannot override it */
+.tbtn svg{width:16px;height:16px;grid-area:1/1}
+/* matched at .tbtn-descendant specificity so the sizing rule cannot win */
 .tbtn .icon-moon{display:block}
 .tbtn .icon-sun{display:none}
 :root[data-theme="dark"] .tbtn .icon-sun{display:block}
@@ -236,140 +249,233 @@ a,p,h1,h2,h3,li,td{overflow-wrap:break-word}
   :root:not([data-theme="light"]) .tbtn .icon-sun{display:block}
   :root:not([data-theme="light"]) .tbtn .icon-moon{display:none}
 }
+#menu-btn{display:grid}
+@media (min-width:900px){#menu-btn{display:none}}
+.tbtn .icon-close{display:none}
+body.nav-open #menu-btn .icon-close{display:block}
+body.nav-open #menu-btn .icon-burger{display:none}
 
-/* ============================================================
-   HERO — the thesis, not the name
-   ============================================================ */
-.hero{padding:clamp(56px,10vw,116px) 0 clamp(40px,6vw,68px)}
-.hero .kicker{display:flex;align-items:center;gap:10px;margin-bottom:26px}
-.hero .kicker::after{content:"";flex:1;height:1px;background:var(--rule)}
+/* drawer — a real mobile sheet, not a shrunken desktop bar */
+.drawer{
+  position:fixed;inset:var(--bar) 0 0 0;z-index:39;
+  background:var(--ground);
+  display:grid;grid-template-rows:1fr auto;
+  max-width:100%;overflow-x:hidden;overflow-y:auto;
+  transform:translateY(-8px);opacity:0;pointer-events:none;visibility:hidden;
+  transition:opacity .22s var(--ease),transform .22s var(--ease),visibility .22s;
+}
+body.nav-open .drawer{transform:none;opacity:1;pointer-events:auto;visibility:visible}
+@media (min-width:900px){.drawer{display:none}}
+.drawer>*{min-width:0;max-width:100%}
+.drawer-nav{padding:var(--s5) var(--gutter);display:flex;flex-direction:column;min-width:0}
+.drawer-nav a{
+  display:flex;align-items:baseline;gap:var(--s4);
+  padding:var(--s4) 0;border-bottom:1px solid var(--rule);
+  text-decoration:none;font-family:var(--display);font-size:26px;
+  font-weight:600;letter-spacing:-.02em;min-height:56px;
+}
+.drawer-nav a .n{font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.1em}
+.drawer-nav a[aria-current="true"]{color:var(--accent)}
+.drawer-foot{padding:var(--s5) var(--gutter) var(--s7);border-top:1px solid var(--rule);min-width:0}
+@media (max-width:360px){
+  .drawer-nav a{font-size:22px;min-height:52px}
+  .drawer-nav{padding-top:var(--s4)}
+}
+.drawer-foot .lab{display:block;margin-bottom:var(--s3)}
+.drawer-links{display:flex;flex-wrap:wrap;gap:var(--s2)}
+
+/* ═══════════════════════════════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════════════════════════════ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
+  font-family:var(--mono);font-size:12.5px;letter-spacing:.05em;
+  text-decoration:none;padding:12px var(--s4);border-radius:var(--r2);
+  border:1px solid var(--rule);color:var(--ink);background:transparent;
+  cursor:pointer;white-space:nowrap;min-height:44px;
+  transition:border-color .18s var(--ease),background .18s var(--ease),
+             transform .18s var(--ease),color .18s var(--ease);
+}
+.btn:hover{border-color:var(--rule-strong);background:var(--surface);transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn.solid{background:var(--ink);color:var(--ground);border-color:var(--ink)}
+.btn.solid:hover{opacity:.88}
+.btn svg{width:13px;height:13px;flex:none}
+.cta{display:flex;flex-wrap:wrap;gap:var(--s2)}
+
+/* ═══════════════════════════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════════════════════════ */
+.hero{padding:clamp(48px,9vw,104px) 0 clamp(40px,6vw,68px)}
+.hero-grid{display:grid;gap:var(--s7);align-items:start}
+@media (min-width:1000px){
+  .hero-grid{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:var(--s8);align-items:center}
+}
+.kicker{display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s5)}
+.kicker::after{content:"";flex:1;height:1px;background:var(--rule)}
 
 .thesis{
   font-family:var(--display);
-  font-size:clamp(33px,6.4vw,64px);
-  font-weight:600;
-  line-height:1.06;
-  letter-spacing:-.028em;
-  max-width:17ch;
-  font-variation-settings:"opsz" 120;
+  font-size:clamp(32px,5.6vw,58px);
+  font-weight:600;line-height:1.06;letter-spacing:-.028em;
+  max-width:16ch;font-variation-settings:"opsz" 120;
 }
 .thesis em{font-style:normal;color:var(--accent)}
-
-.hero .sub{
-  margin-top:26px;max-width:var(--measure);
-  font-size:1.06em;color:var(--muted);line-height:1.68;
-}
+.hero .sub{margin-top:var(--s5);max-width:var(--measure);color:var(--muted);line-height:1.68}
 .hero .sub strong{color:var(--ink);font-weight:500}
-
 .who{
-  margin-top:34px;padding-top:20px;border-top:1px solid var(--rule);
-  display:flex;flex-wrap:wrap;gap:8px 26px;align-items:baseline;
+  margin-top:var(--s6);padding-top:var(--s5);border-top:1px solid var(--rule);
+  display:flex;flex-wrap:wrap;gap:var(--s2) var(--s5);align-items:baseline;
 }
-.who .name{font-family:var(--display);font-size:1.06em;font-weight:600;letter-spacing:-.01em}
-.who .meta{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.02em}
+.who .name{font-family:var(--display);font-size:1.06em;font-weight:600}
+.who .meta{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.hero .cta{margin-top:var(--s5)}
 
-.cta{display:flex;flex-wrap:wrap;gap:9px;margin-top:26px}
-.btn{
-  display:inline-flex;align-items:center;gap:7px;
-  font-family:var(--mono);font-size:12.5px;letter-spacing:.05em;
-  text-decoration:none;padding:11px 16px;border-radius:6px;
-  border:1px solid var(--rule);color:var(--ink);background:transparent;
-  cursor:pointer;transition:border-color .18s,background .18s,transform .18s;
-  white-space:nowrap;
+/* hero visual: the raw→clean transform this portfolio is actually about */
+.ledger-demo{
+  border:1px solid var(--rule);border-radius:var(--r4);overflow:hidden;
+  background:var(--surface);box-shadow:var(--shadow-2);
 }
-.btn:hover{border-color:var(--rule-strong);background:var(--surface);transform:translateY(-1px)}
-.btn.solid{background:var(--ink);color:var(--ground);border-color:var(--ink)}
-.btn.solid:hover{background:var(--ink);opacity:.87;transform:translateY(-1px)}
-.btn svg{width:13px;height:13px;flex:none}
+.ld-bar{
+  display:flex;align-items:center;gap:var(--s2);
+  padding:10px var(--s4);border-bottom:1px solid var(--rule);background:var(--ground);
+}
+.ld-dot{width:8px;height:8px;border-radius:50%;background:var(--rule-strong);opacity:.28}
+.ld-title{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--faint);margin-left:var(--s2)}
+.ld-rows{display:grid}
+.ld-row{
+  display:grid;grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr);
+  align-items:center;gap:var(--s2);
+  padding:11px var(--s4);border-bottom:1px solid var(--rule);
+  font-family:var(--mono);font-size:11.5px;
+}
+.ld-row:last-child{border-bottom:none}
+.ld-raw{color:var(--flag);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ld-arrow{color:var(--faint);text-align:center;font-size:11px}
+.ld-clean{color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ld-row.settled .ld-raw{text-decoration:line-through;opacity:.5}
+.ld-foot{
+  padding:10px var(--s4);background:var(--ground);border-top:1px solid var(--rule);
+  font-family:var(--mono);font-size:10.5px;color:var(--muted);
+  display:flex;justify-content:space-between;gap:var(--s3);
+}
+.ld-foot b{color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+/* the reveal is a transition on opacity only — cheap, no layout work */
+.ld-row .ld-clean{opacity:0;transition:opacity .45s var(--ease)}
+.ld-row.settled .ld-clean{opacity:1}
+@media (prefers-reduced-motion:reduce){
+  .ld-row .ld-clean{opacity:1;transition:none}
+  .ld-row .ld-raw{text-decoration:line-through;opacity:.5}
+}
 
-/* ============================================================
-   SECTION + LEDGER RAIL
-   ============================================================ */
+/* ═══════════════════════════════════════════════════════════════
+   SECTIONS + LEDGER RAIL
+   ═══════════════════════════════════════════════════════════════ */
 .sec{border-top:1px solid var(--rule);padding:clamp(44px,6vw,80px) 0;scroll-margin-top:70px}
 #top{scroll-margin-top:0}
-.sec-in{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+.sec-in{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--s3)}
 @media (min-width:1000px){
-  .sec-in{grid-template-columns:var(--rail) minmax(0,1fr);gap:36px}
-  .rail{position:sticky;top:86px;align-self:start}
+  .sec-in{grid-template-columns:var(--rail) minmax(0,1fr);gap:var(--s6)}
+  .rail{position:sticky;top:calc(var(--bar) + 28px);align-self:start}
 }
-.rail{display:flex;align-items:baseline;gap:9px;padding-bottom:6px}
-.rail .lab{color:var(--faint)}
+.rail{display:flex;align-items:baseline;gap:var(--s2);padding-bottom:var(--s1)}
 @media (min-width:1000px){
-  .rail{flex-direction:column;gap:4px;padding-bottom:0}
-  .rail .rail-note{font-family:var(--mono);font-size:11px;color:var(--faint);
+  .rail{flex-direction:column;gap:var(--s1);padding-bottom:0}
+  .rail-note{font-family:var(--mono);font-size:11px;color:var(--faint);
     line-height:1.5;max-width:15ch;margin-top:2px}
 }
 .rail-note{display:none}
 @media (min-width:1000px){.rail-note{display:block}}
+h2.sh{font-size:clamp(23px,2.7vw,31px);letter-spacing:-.022em;margin-bottom:var(--s1)}
+.sec-lede{color:var(--muted);max-width:var(--measure);margin-bottom:var(--s5)}
 
-h2.sh{font-size:clamp(23px,2.7vw,31px);letter-spacing:-.022em;margin-bottom:6px}
-.sec-lede{color:var(--muted);max-width:var(--measure);margin-bottom:26px}
-
-/* ============================================================
-   FIGURES — tabular ledger cells
-   ============================================================ */
+/* ═══════════════════════════════════════════════════════════════
+   FIGURES
+   ═══════════════════════════════════════════════════════════════ */
 .figs{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));
-  border:1px solid var(--rule);border-radius:8px;overflow:hidden;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(126px,1fr));
+  border:1px solid var(--rule);border-radius:var(--r3);overflow:hidden;
   background:var(--rule);gap:1px;
 }
-.fig{background:var(--ground);padding:16px 15px 15px}
-.fig .n{
-  font-family:var(--display);font-size:clamp(25px,3.4vw,33px);font-weight:600;
-  letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums;
-}
+.fig{background:var(--ground);padding:var(--s4) 15px 15px}
+.fig .n{font-family:var(--display);font-size:clamp(25px,3.4vw,33px);font-weight:600;
+  letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
 .fig .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;
-  color:var(--muted);margin-top:8px;line-height:1.45;text-transform:uppercase}
+  color:var(--muted);margin-top:var(--s2);line-height:1.45;text-transform:uppercase}
 
-/* ============================================================
-   CAPABILITIES
-   ============================================================ */
-.caps{display:grid;gap:0}
-.cap{
-  display:grid;gap:4px 22px;padding:17px 0;border-top:1px solid var(--rule);
-}
-.cap:first-child{border-top:none;padding-top:0}
-@media (min-width:640px){
-  .cap{grid-template-columns:150px minmax(0,1fr);align-items:baseline}
-}
-.cap h3{font-family:var(--body);font-size:13.5px;font-weight:600;letter-spacing:0}
-.cap p{color:var(--muted);font-size:.94em;line-height:1.6}
+/* ═══════════════════════════════════════════════════════════════
+   ABOUT
+   ═══════════════════════════════════════════════════════════════ */
+.about p{max-width:var(--measure);color:var(--muted);margin-bottom:var(--s3)}
+.about p strong{color:var(--ink);font-weight:500}
+.about p:last-child{margin-bottom:0}
 
-/* ============================================================
-   WORK — case studies
-   ============================================================ */
+/* ═══════════════════════════════════════════════════════════════
+   SKILLS
+   ═══════════════════════════════════════════════════════════════ */
+.skillset{display:grid;gap:var(--s5)}
+@media (min-width:700px){.skillset{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s5) var(--s6)}}
+.skillgroup h3{
+  font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--faint);font-weight:500;margin-bottom:var(--s3);
+  padding-bottom:var(--s2);border-bottom:1px solid var(--rule);
+}
+.chips{display:flex;flex-wrap:wrap;gap:var(--s2)}
+.chip{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.02em;
+  color:var(--ink);background:var(--surface);border:1px solid var(--rule);
+  padding:5px 10px;border-radius:var(--r1);
+  transition:border-color .18s var(--ease),background .18s var(--ease);
+}
+.chip:hover{border-color:var(--accent);background:var(--accent-soft)}
+.skillnote{
+  margin-top:var(--s5);font-size:.93em;color:var(--faint);max-width:var(--measure);
+  padding-left:var(--s3);border-left:2px solid var(--rule);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PROJECTS
+   ═══════════════════════════════════════════════════════════════ */
 .work{display:grid;gap:0}
-.case{padding:34px 0;border-top:1px solid var(--rule)}
+.case{padding:var(--s6) 0;border-top:1px solid var(--rule)}
 .case:first-child{border-top:none;padding-top:0}
-
-.case-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 14px}
+.case-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--s3) var(--s4)}
 .case h3{font-size:clamp(20px,2.5vw,26px);letter-spacing:-.022em}
 .pill{
   font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
-  padding:4px 8px;border-radius:4px;white-space:nowrap;
-  background:var(--accent-soft);color:var(--accent);border:1px solid transparent;
+  padding:4px var(--s2);border-radius:var(--r1);white-space:nowrap;
+  background:var(--accent-soft);color:var(--accent);
 }
-.stack{display:flex;flex-wrap:wrap;gap:6px;margin:13px 0 15px}
-.tag{
-  font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;
-  color:var(--muted);background:var(--surface);padding:4px 8px;border-radius:4px;
-}
-.case .claim{max-width:var(--measure);margin-bottom:16px;font-size:1.01em}
-
-.beats{display:grid;gap:14px;max-width:var(--measure);margin-bottom:18px}
+.stack{display:flex;flex-wrap:wrap;gap:var(--s1) 6px;margin:var(--s3) 0 var(--s4)}
+.tag{font-family:var(--mono);font-size:10.5px;color:var(--muted);
+  background:var(--surface);padding:4px var(--s2);border-radius:var(--r1)}
+.case .claim{max-width:var(--measure);margin-bottom:var(--s4)}
+.beats{display:grid;gap:var(--s4);max-width:var(--measure);margin-bottom:var(--s4)}
 .beat{display:grid;gap:3px}
-.beat .bt{
-  font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--faint);
-}
+.beat .bt{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--faint)}
 .beat p{color:var(--muted);font-size:.96em;line-height:1.62}
 .beat p strong{color:var(--ink);font-weight:500}
 
-/* defect table — clay = defect, green = resolution */
+/* expandable detail — progressive disclosure, no JS needed */
+details.more{margin:0 0 var(--s4);max-width:var(--measure)}
+details.more summary{
+  cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:var(--s2);
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;color:var(--muted);
+  padding:var(--s2) 0;min-height:44px;
+  transition:color .18s var(--ease);
+}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary:hover{color:var(--accent)}
+details.more summary .chev{transition:transform .2s var(--ease);display:inline-block}
+details.more[open] summary .chev{transform:rotate(90deg)}
+details.more .inner{padding-top:var(--s2)}
+@media (prefers-reduced-motion:reduce){details.more summary .chev{transition:none}}
+
 .tablewrap{
-  overflow-x:auto;margin:4px 0 20px;border:1px solid var(--rule);border-radius:8px;
-  /* the two "local" layers mask the ground; the two "scroll" layers are the
-     shadows they uncover, so a shadow shows only on a side you can scroll toward */
+  overflow-x:auto;margin:var(--s1) 0 var(--s5);
+  border:1px solid var(--rule);border-radius:var(--r3);
   background:
     linear-gradient(90deg,var(--ground) 40%,rgba(0,0,0,0)) left center / 34px 100% no-repeat local,
     linear-gradient(90deg,rgba(0,0,0,0),var(--ground) 60%) right center / 34px 100% no-repeat local,
@@ -379,109 +485,129 @@ h2.sh{font-size:clamp(23px,2.7vw,31px);letter-spacing:-.022em;margin-bottom:6px}
   overscroll-behavior-x:contain;
 }
 table{border-collapse:collapse;width:100%;min-width:520px;font-size:13.5px}
-caption{
-  text-align:left;padding:12px 15px 0;font-family:var(--mono);font-size:10.5px;
-  letter-spacing:.09em;text-transform:uppercase;color:var(--faint);
-}
-th{
-  text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+caption{text-align:left;padding:var(--s3) 15px 0;font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.09em;text-transform:uppercase;color:var(--faint)}
+th{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
   text-transform:uppercase;font-weight:500;color:var(--faint);
-  padding:12px 15px 9px;border-bottom:1px solid var(--rule);
-}
+  padding:var(--s3) 15px var(--s2);border-bottom:1px solid var(--rule)}
 td{padding:10px 15px;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--muted)}
 tr:last-child td{border-bottom:none}
 tbody tr:hover td{background:var(--surface)}
 td.defect{color:var(--flag);font-family:var(--mono);font-size:12px;white-space:nowrap}
 td.fix{color:var(--ink)}
-td.fix code{
-  font-family:var(--mono);font-size:11.5px;color:var(--accent);
-  background:var(--accent-soft);padding:1.5px 5px;border-radius:3px;
-}
+td.fix code{font-family:var(--mono);font-size:11.5px;color:var(--accent);
+  background:var(--accent-soft);padding:1.5px 5px;border-radius:3px}
 
-.case-links{display:flex;flex-wrap:wrap;gap:8px}
+.case-links{display:flex;flex-wrap:wrap;gap:var(--s3)}
 .tlink{
   font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;
   text-decoration:none;color:var(--muted);
   border-bottom:1px solid var(--rule);padding:6px 0;
-  display:inline-flex;align-items:center;
-  transition:color .18s,border-color .18s;
+  display:inline-flex;align-items:center;gap:6px;
+  transition:color .18s var(--ease),border-color .18s var(--ease);
 }
 .tlink:hover{color:var(--accent);border-color:var(--accent)}
+.tlink .arw{transition:transform .18s var(--ease)}
+.tlink:hover .arw{transform:translate(2px,-2px)}
+@media (prefers-reduced-motion:reduce){.tlink .arw{transition:none}}
 
-/* ============================================================
-   TIMELINE / CREDENTIALS
-   ============================================================ */
+/* ═══════════════════════════════════════════════════════════════
+   TIMELINE / ROWS
+   ═══════════════════════════════════════════════════════════════ */
 .rows{display:grid;gap:0}
-.row{
-  display:grid;gap:3px 22px;padding:16px 0;border-top:1px solid var(--rule);
-}
+.row{display:grid;gap:3px var(--s5);padding:var(--s4) 0;border-top:1px solid var(--rule)}
 .row:first-child{border-top:none;padding-top:0}
-@media (min-width:640px){
-  .row{grid-template-columns:118px minmax(0,1fr);align-items:baseline}
-}
-.row .when{
-  font-family:var(--mono);font-size:11.5px;color:var(--faint);
-  letter-spacing:.03em;font-variant-numeric:tabular-nums;white-space:nowrap;
-}
-.row .what{font-weight:500;font-size:.98em}
+@media (min-width:640px){.row{grid-template-columns:132px minmax(0,1fr);align-items:baseline}}
+.row .when{font-family:var(--mono);font-size:11.5px;color:var(--faint);
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.row .what{font-weight:500}
 .row .detail{color:var(--muted);font-size:.93em;margin-top:2px;max-width:var(--measure)}
+.row .rowtags{display:flex;flex-wrap:wrap;gap:5px;margin-top:var(--s2)}
+.row .rowtags .tag{font-size:10px}
+.subhead{margin:var(--s6) 0 var(--s4)}
+.subhead:first-of-type{margin-top:0}
 
-/* ============================================================
+/* ═══════════════════════════════════════════════════════════════
    CONTACT
-   ============================================================ */
+   ═══════════════════════════════════════════════════════════════ */
 .contact-card{
-  border:1px solid var(--rule);border-radius:10px;padding:clamp(24px,4vw,38px);
-  background:var(--surface);box-shadow:var(--shadow);
+  border:1px solid var(--rule);border-radius:var(--r4);
+  padding:clamp(24px,4vw,40px);background:var(--surface);box-shadow:var(--shadow-2);
 }
-.contact-card h2{font-size:clamp(24px,3.2vw,34px);letter-spacing:-.024em}
-.contact-card p{color:var(--muted);max-width:var(--measure);margin-top:12px}
+.contact-card h2{font-size:clamp(24px,3.2vw,34px);letter-spacing:-.024em;margin-top:var(--s3)}
+.contact-card>p{color:var(--muted);max-width:var(--measure);margin-top:var(--s3)}
+.contact-grid{display:grid;gap:var(--s6);margin-top:var(--s5)}
+@media (min-width:820px){.contact-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--s7)}}
 
-.copy-note{
-  font-family:var(--mono);font-size:11px;color:var(--accent);
-  opacity:0;transition:opacity .2s;margin-left:2px;
+.field{display:grid;gap:6px;margin-bottom:var(--s3)}
+.field label{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--faint)}
+.field input,.field textarea{
+  font-family:var(--body);font-size:15px;color:var(--ink);
+  background:var(--ground);border:1px solid var(--rule);border-radius:var(--r2);
+  padding:11px var(--s3);width:100%;min-width:0;
+  transition:border-color .18s var(--ease);
 }
+.field textarea{resize:vertical;min-height:104px;line-height:1.55}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--accent)}
+.field input:focus-visible,.field textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.formnote{font-size:11.5px;color:var(--faint);font-family:var(--mono);
+  line-height:1.55;margin-top:var(--s3)}
+.direct{display:grid;gap:var(--s3);align-content:start}
+.direct .lab{display:block;margin-bottom:var(--s1)}
+.dline{
+  display:flex;align-items:center;gap:var(--s3);text-decoration:none;
+  padding:var(--s3) 0;border-bottom:1px solid var(--rule);min-height:52px;
+  transition:color .18s var(--ease);
+}
+.dline:hover{color:var(--accent)}
+.dline:hover .dval{color:var(--accent)}
+.dline .dk{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--faint);width:64px;flex:none}
+.dline .dval{font-size:14.5px;word-break:break-all;transition:color .18s var(--ease)}
+.copy-note{font-family:var(--mono);font-size:11px;color:var(--accent);
+  opacity:0;transition:opacity .2s var(--ease);display:block;min-height:16px;margin-top:var(--s2)}
 .copy-note.on{opacity:1}
 
 footer{
-  border-top:1px solid var(--rule);
-  padding:26px 0 44px;
-  display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
-  font-family:var(--mono);font-size:11.5px;color:var(--faint);letter-spacing:.03em;
+  border-top:1px solid var(--rule);padding:var(--s5) 0 var(--s7);
+  display:flex;flex-wrap:wrap;gap:var(--s2) var(--s5);justify-content:space-between;
+  font-family:var(--mono);font-size:11.5px;color:var(--faint);
 }
-footer a{color:var(--faint);text-decoration:none;display:inline-flex;align-items:center;padding:4px 0}
+footer a{color:var(--faint);text-decoration:none;display:inline-flex;
+  align-items:center;padding:var(--s1) 0}
 footer a:hover{color:var(--ink)}
 
-/* ---- touch: every control reaches a 44px hit area ---- */
+/* ═══════════════════════════════════════════════════════════════
+   TOUCH + MOTION + PRINT
+   ═══════════════════════════════════════════════════════════════ */
 @media (pointer:coarse){
-  .tnav a{min-height:44px;padding-top:0;padding-bottom:0}
+  .tnav a{min-height:44px}
   .tbtn{width:44px;height:44px}
-  .btn{padding-top:13px;padding-bottom:13px;min-height:44px}
-  .tlink{display:inline-flex;align-items:center;min-height:44px}
-  footer a{display:inline-flex;align-items:center;min-height:44px}
   .topbar-in{height:64px}
+  .drawer{inset:64px 0 0 0}
   .sec{scroll-margin-top:76px}
+  .tlink{min-height:44px;padding:10px 0}
+  footer a{min-height:44px}
+  .chip{padding:8px 11px}
 }
 
-/* ============================================================
-   REVEAL
-   ============================================================ */
 .rv{opacity:0;transform:translateY(10px);
-  transition:opacity .6s cubic-bezier(.2,.6,.3,1),transform .6s cubic-bezier(.2,.6,.3,1)}
+  transition:opacity .55s var(--ease),transform .55s var(--ease)}
 .rv.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){
   .rv{opacity:1;transform:none;transition:none}
+  .btn:hover,.btn:active{transform:none}
 }
 
-/* ============================================================
-   PRINT
-   ============================================================ */
 @media print{
-  .topbar,.cta,.tbtn,.skip,.case-links{display:none}
+  .topbar,.drawer,.cta,.tbtn,.skip,.case-links,.contact-grid,.ledger-demo{display:none}
   body{background:#fff;color:#000;font-size:10.5pt}
   .sec{padding:16pt 0;border-color:#ccc}
   .sec-in{grid-template-columns:1fr}
   .rail{position:static}
   .rv{opacity:1;transform:none}
+  details.more{display:none}
   a{text-decoration:none;color:#000}
   @page{margin:14mm}
 }
@@ -495,8 +621,10 @@ footer a:hover{color:var(--ink)}
     <a class="mark" href="#top">Asifali&nbsp;N<span>&nbsp;/ Data Analyst</span></a>
     <div class="topbar-right">
       <nav class="tnav" aria-label="Sections">
-        <a href="#work">Work</a>
-        <a href="#capabilities">Capabilities</a>
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="#work">Projects</a>
+        <a href="#experience">Experience</a>
         <a href="#background">Background</a>
         <a href="#contact">Contact</a>
       </nav>
@@ -504,6 +632,30 @@ footer a:hover{color:var(--ink)}
         <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
         <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.6M12 19.4V22M2 12h2.6M19.4 12H22M4.9 4.9l1.9 1.9M17.2 17.2l1.9 1.9M19.1 4.9l-1.9 1.9M6.8 17.2l-1.9 1.9"/></svg>
       </button>
+      <button class="tbtn" id="menu-btn" type="button" aria-label="Open menu"
+              aria-expanded="false" aria-controls="drawer">
+        <svg class="icon-burger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="drawer" id="drawer">
+  <nav class="drawer-nav" aria-label="Mobile sections">
+    <a href="#about"><span class="n">01</span> About</a>
+    <a href="#skills"><span class="n">02</span> Skills</a>
+    <a href="#work"><span class="n">03</span> Projects</a>
+    <a href="#experience"><span class="n">04</span> Experience</a>
+    <a href="#background"><span class="n">05</span> Background</a>
+    <a href="#contact"><span class="n">06</span> Contact</a>
+  </nav>
+  <div class="drawer-foot">
+    <span class="lab">Elsewhere</span>
+    <div class="drawer-links">
+      <a class="btn" href="mailto:asifali.n7777@gmail.com">Email</a>
+      <a class="btn" href="https://github.com/ASIFALI-N7777" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn" href="https://linkedin.com/in/asifali-n7777" target="_blank" rel="noopener">LinkedIn</a>
     </div>
   </div>
 </div>
@@ -511,38 +663,59 @@ footer a:hover{color:var(--ink)}
 <main id="main">
 <div id="top"></div>
 
-<!-- ================= HERO ================= -->
+<!-- ══════════ HERO ══════════ -->
 <header class="hero">
   <div class="shell">
-    <div class="kicker rv"><span class="lab">Data Analyst · Portfolio 2026</span></div>
+    <div class="hero-grid">
+      <div>
+        <div class="kicker rv"><span class="lab">Data Analyst · Portfolio 2026</span></div>
+        <h1 class="thesis rv">Numbers you can <em>audit</em>, not just read.</h1>
+        <p class="sub rv">Most analysis asks you to trust the output. I build the other
+        kind — where every dropped row, corrected price and merged region stays visible as
+        a formula you can click into. <strong>If a reviewer can't see why a number moved,
+        the pipeline isn't finished.</strong></p>
 
-    <h1 class="thesis rv">Numbers you can <em>audit</em>, not just read.</h1>
+        <div class="who rv">
+          <span class="name">Asifali N</span>
+          <span class="meta">B.Tech IT, 2026 · Google Data Analytics certified</span>
+          <span class="meta">Tamil Nadu, India</span>
+        </div>
 
-    <p class="sub rv">Most analysis asks you to trust the output. I build the other kind —
-    where every dropped row, corrected price and merged region stays visible as a formula
-    you can click into. <strong>If a reviewer can't see why a number moved, the pipeline
-    isn't finished.</strong> Graduating 2026, and looking for my first analyst role.</p>
+        <div class="cta rv">
+          <a class="btn solid" href="#work">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/></svg>
+            View projects
+          </a>
+          <a class="btn" href="#contact">Contact me</a>
+          <a class="btn" href="https://github.com/ASIFALI-N7777" target="_blank" rel="noopener">GitHub</a>
+          <a class="btn" href="https://linkedin.com/in/asifali-n7777" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
 
-    <div class="who rv">
-      <span class="name">Asifali N</span>
-      <span class="meta">B.Tech IT, 2026 · Google Data Analytics certified</span>
-      <span class="meta">Tamil Nadu, India</span>
-    </div>
-
-    <div class="cta rv">
-      <a class="btn solid" href="mailto:asifali.n7777@gmail.com">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="2"/><path d="m3 6 9 6.5L21 6"/></svg>
-        Get in touch
-      </a>
-      <a class="btn" href="https://claude.ai/code/artifact/0bd8ba6c-71da-4667-ac75-74aeb5ebca27" target="_blank" rel="noopener">Résumé</a>
-      <a class="btn" href="https://claude.ai/code/artifact/87596369-8445-48a5-9b18-5c9ac3c52b89" target="_blank" rel="noopener">Full CV</a>
-      <a class="btn" href="https://github.com/ASIFALI-N7777" target="_blank" rel="noopener">GitHub</a>
-      <a class="btn" href="https://linkedin.com/in/asifali-n7777" target="_blank" rel="noopener">LinkedIn</a>
+      <!-- decorative, but it shows the actual transform the work performs -->
+      <div class="ledger-demo rv" aria-hidden="true">
+        <div class="ld-bar">
+          <span class="ld-dot"></span><span class="ld-dot"></span><span class="ld-dot"></span>
+          <span class="ld-title">Clean_Data · live formulas</span>
+        </div>
+        <div class="ld-rows" id="ld-rows">
+          <div class="ld-row"><span class="ld-raw">"  north  "</span><span class="ld-arrow">→</span><span class="ld-clean">North</span></div>
+          <div class="ld-row"><span class="ld-raw">"INR 1,234.50"</span><span class="ld-arrow">→</span><span class="ld-clean">1234.50</span></div>
+          <div class="ld-row"><span class="ld-raw">"11/03/2024"</span><span class="ld-arrow">→</span><span class="ld-clean">2024-03-11</span></div>
+          <div class="ld-row"><span class="ld-raw">"Nth"</span><span class="ld-arrow">→</span><span class="ld-clean">North</span></div>
+          <div class="ld-row"><span class="ld-raw">unit price = ∅</span><span class="ld-arrow">→</span><span class="ld-clean">XLOOKUP(master)</span></div>
+          <div class="ld-row"><span class="ld-raw">duplicate posting</span><span class="ld-arrow">→</span><span class="ld-clean">excluded, reason kept</span></div>
+        </div>
+        <div class="ld-foot">
+          <span>8 defect classes</span>
+          <span>every step <b>traceable</b></span>
+        </div>
+      </div>
     </div>
   </div>
 </header>
 
-<!-- ================= FIGURES ================= -->
+<!-- ══════════ FIGURES ══════════ -->
 <section class="sec" aria-label="Key figures">
   <div class="shell">
     <div class="sec-in">
@@ -561,26 +734,119 @@ footer a:hover{color:var(--ink)}
   </div>
 </section>
 
-<!-- ================= WORK ================= -->
+<!-- ══════════ ABOUT ══════════ -->
+<section class="sec" id="about">
+  <div class="shell">
+    <div class="sec-in">
+      <div class="rail rv"><span class="lab">01 — About</span>
+        <span class="rail-note">Where I am, and where I'm heading.</span></div>
+      <div class="about">
+        <h2 class="sh rv">About</h2>
+        <p class="rv">I'm finishing a B.Tech in Information Technology at Arunai Engineering
+        College and I work on the unglamorous half of analytics: getting data into a state
+        where the conclusions actually hold. <strong>Two internships, three projects, one
+        published paper.</strong></p>
+        <p class="rv">The work I care about sits in Excel, Power BI and SQL — cleaning
+        records, modelling them, and building dashboards people use to decide something.
+        My sales pipeline project is the clearest example: 10,000+ deliberately messy order
+        lines, eight classes of defect, and a cleaning layer written entirely as live
+        formulas so <strong>every correction can be inspected rather than trusted.</strong></p>
+        <p class="rv">Alongside that I've built full-stack CRUD applications and tested REST
+        APIs, and I use Claude to move faster through the drafting and review parts of a
+        build. <strong>I'm a fresher, and I'd rather be judged on the work than on a job
+        title.</strong> What I'm looking for now is a first analyst role where the data is
+        real and the questions are someone's actual problem.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SKILLS ══════════ -->
+<section class="sec" id="skills">
+  <div class="shell">
+    <div class="sec-in">
+      <div class="rail rv"><span class="lab">02 — Skills</span>
+        <span class="rail-note">Only what I have actually shipped with.</span></div>
+      <div>
+        <h2 class="sh rv">Skills</h2>
+        <p class="sec-lede rv">Grouped by what they're for. Nothing here is padding — each
+        item appears in a project, an internship or a certification below.</p>
+
+        <div class="skillset">
+          <div class="skillgroup rv">
+            <h3>Analysis &amp; BI</h3>
+            <div class="chips">
+              <span class="chip">Microsoft Excel</span><span class="chip">Pivot Tables</span>
+              <span class="chip">XLOOKUP</span><span class="chip">Nested IF</span>
+              <span class="chip">Slicers</span><span class="chip">Power BI</span>
+              <span class="chip">DAX</span><span class="chip">Data modelling</span>
+              <span class="chip">Data visualisation</span>
+            </div>
+          </div>
+          <div class="skillgroup rv">
+            <h3>Data &amp; Databases</h3>
+            <div class="chips">
+              <span class="chip">SQL</span><span class="chip">MySQL</span>
+              <span class="chip">Data cleaning</span><span class="chip">ETL</span>
+              <span class="chip">KPI reporting</span>
+            </div>
+          </div>
+          <div class="skillgroup rv">
+            <h3>Programming</h3>
+            <div class="chips">
+              <span class="chip">Java</span><span class="chip">Python</span>
+              <span class="chip">PowerShell</span><span class="chip">HTML / CSS</span>
+              <span class="chip">JavaScript</span>
+            </div>
+          </div>
+          <div class="skillgroup rv">
+            <h3>Machine Learning</h3>
+            <div class="chips">
+              <span class="chip">Classification</span><span class="chip">Behavioural features</span>
+              <span class="chip">Model evaluation</span>
+            </div>
+          </div>
+          <div class="skillgroup rv">
+            <h3>Tools &amp; Practice</h3>
+            <div class="chips">
+              <span class="chip">Git</span><span class="chip">GitHub</span>
+              <span class="chip">Postman</span><span class="chip">Claude / Claude Code</span>
+            </div>
+          </div>
+          <div class="skillgroup rv">
+            <h3>Languages</h3>
+            <div class="chips">
+              <span class="chip">English</span><span class="chip">Tamil</span>
+              <span class="chip">Hindi</span><span class="chip">Urdu</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="skillnote rv">Deliberately short. I'd rather show five tools I've built
+        something with than twenty I've read about.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PROJECTS ══════════ -->
 <section class="sec" id="work">
   <div class="shell">
     <div class="sec-in">
-      <div class="rail rv"><span class="lab">Work</span>
-        <span class="rail-note">Three projects, and what each one actually had to solve.</span></div>
+      <div class="rail rv"><span class="lab">03 — Projects</span>
+        <span class="rail-note">Three case studies, problem first.</span></div>
 
       <div>
-        <h2 class="sh rv">Selected work</h2>
-        <p class="sec-lede rv">Each of these started from a problem someone already had —
-        a dataset nobody trusted, a classroom where decline surfaced too late, a ration
-        shop where the paperwork couldn't say who collected what.</p>
+        <h2 class="sh rv">Projects</h2>
+        <p class="sec-lede rv">Each of these started from a problem someone already had — a
+        dataset nobody trusted, a classroom where decline surfaced too late, a ration shop
+        where the paperwork couldn't say who collected what.</p>
 
         <div class="work">
 
-          <!-- CASE 1 -->
+          <!-- ─── CASE 1 ─── -->
           <article class="case rv">
-            <div class="case-head">
-              <h3>Sales Data Analysis Pipeline</h3>
-            </div>
+            <div class="case-head"><h3>Sales Data Analysis Pipeline</h3></div>
             <div class="stack">
               <span class="tag">Excel</span><span class="tag">Power BI / DAX</span>
               <span class="tag">Python</span><span class="tag">PowerShell</span><span class="tag">SQL</span>
@@ -588,57 +854,64 @@ footer a:hover{color:var(--ink)}
             <p class="claim">An end-to-end pipeline that turns a deliberately dirty
             10,000-row sales extract into a KPI dashboard you can defend line by line.</p>
 
-            <div class="tablewrap">
-              <table>
-                <caption>Defects in the raw extract, and how each was handled</caption>
-                <thead>
-                  <tr><th scope="col">Defect</th><th scope="col">Resolution</th></tr>
-                </thead>
-                <tbody>
-                  <tr><td class="defect">Duplicate postings</td>
-                      <td class="fix"><code>MATCH</code> first-occurrence test drives a duplicate flag</td></tr>
-                  <tr><td class="defect">Three date formats</td>
-                      <td class="fix"><code>DATE</code> / <code>DATEVALUE</code> / <code>SEARCH</code> — locale-independent parsing</td></tr>
-                  <tr><td class="defect">Currency stored as text</td>
-                      <td class="fix"><code>SUBSTITUTE</code> + <code>VALUE</code> conversion to number</td></tr>
-                  <tr><td class="defect">Blank prices</td>
-                      <td class="fix"><code>XLOOKUP</code> recovery against the product master</td></tr>
-                  <tr><td class="defect">Region aliases</td>
-                      <td class="fix">Alias-to-canonical mapping table, joined on lookup</td></tr>
-                  <tr><td class="defect">Cancelled &amp; returned rows</td>
-                      <td class="fix">Nested <code>IF</code> rules that record <em>why</em> a row was excluded</td></tr>
-                </tbody>
-              </table>
-            </div>
-
             <div class="beats">
               <div class="beat">
-                <span class="bt">The decision that mattered</span>
-                <p>Every column of the clean layer is a <strong>live formula reading from the raw
-                sheet</strong> — nothing pre-computed in Python. It costs performance and buys
-                something better: a reviewer can click any cell and see why that row was kept,
-                corrected or dropped.</p>
+                <span class="bt">Problem</span>
+                <p>Real ERP exports arrive broken — duplicate postings, three date formats
+                in one column, currency stored as text, blank prices, region names spelled
+                four different ways. <strong>Any dashboard built on that is confidently
+                wrong.</strong></p>
               </div>
               <div class="beat">
-                <span class="bt">Stability</span>
-                <p>A deterministic <strong>SUMIFS/AVERAGEIFS layer</strong> sits between the pivots
-                and the charts, so a visual doesn't break the moment someone expands a pivot field.</p>
+                <span class="bt">The decision that mattered</span>
+                <p>Every column of the clean layer is a <strong>live formula reading from
+                the raw sheet</strong> — nothing pre-computed in Python. It costs
+                performance and buys something better: a reviewer can click any cell and
+                see why that row was kept, corrected or dropped.</p>
+              </div>
+              <div class="beat">
+                <span class="bt">What I built</span>
+                <p>A three-stage pipeline — raw extract generation, a formula-driven
+                cleaning layer, and dashboard assembly. A deterministic
+                <strong>SUMIFS/AVERAGEIFS layer</strong> sits between the pivots and the
+                charts so a visual doesn't break when someone expands a pivot field.</p>
               </div>
               <div class="beat">
                 <span class="bt">Outcome</span>
-                <p>DAX measures for Total Sales, Profit % and YoY Growth; five PivotTables on a
-                shared cache; three slicers; and a <strong>loss watchlist</strong> showing where
-                margin is leaking. Three scripts rebuild the whole thing — the monthly refresh is
-                re-run, not rebuilt.</p>
+                <p>DAX measures for Total Sales, Profit % and YoY Growth; five PivotTables
+                on a shared cache; three slicers; and a <strong>loss watchlist</strong>
+                showing where margin is leaking. The monthly refresh is re-run, not rebuilt.</p>
               </div>
             </div>
 
+            <details class="more">
+              <summary><span class="chev">›</span> The eight defect classes, and how each was handled</summary>
+              <div class="inner">
+                <div class="tablewrap">
+                  <table>
+                    <caption>Raw extract → clean layer</caption>
+                    <thead><tr><th scope="col">Defect</th><th scope="col">Resolution</th></tr></thead>
+                    <tbody>
+                      <tr><td class="defect">Duplicate postings</td><td class="fix"><code>MATCH</code> first-occurrence test drives a duplicate flag</td></tr>
+                      <tr><td class="defect">Three date formats</td><td class="fix"><code>DATE</code> / <code>DATEVALUE</code> / <code>SEARCH</code> — locale-independent parsing</td></tr>
+                      <tr><td class="defect">Currency stored as text</td><td class="fix"><code>SUBSTITUTE</code> + <code>VALUE</code> conversion to number</td></tr>
+                      <tr><td class="defect">Blank unit price</td><td class="fix"><code>XLOOKUP</code> recovery against the product master</td></tr>
+                      <tr><td class="defect">Missing category / name</td><td class="fix"><code>XLOOKUP</code> against the product master</td></tr>
+                      <tr><td class="defect">Casing &amp; padding</td><td class="fix"><code>TRIM</code> / <code>UPPER</code> normalisation</td></tr>
+                      <tr><td class="defect">Region aliases</td><td class="fix">Alias-to-canonical mapping table, joined on lookup</td></tr>
+                      <tr><td class="defect">Cancelled &amp; returned</td><td class="fix">Nested <code>IF</code> rules that record <em>why</em> a row was excluded</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </details>
+
             <div class="case-links">
-              <a class="tlink" href="https://github.com/ASIFALI-N7777/Sales-Data-Analysis-using-Excel-Power-BI" target="_blank" rel="noopener">Repository ↗</a>
+              <a class="tlink" href="https://github.com/ASIFALI-N7777/Sales-Data-Analysis-using-Excel-Power-BI" target="_blank" rel="noopener">Repository <span class="arw">↗</span></a>
             </div>
           </article>
 
-          <!-- CASE 2 -->
+          <!-- ─── CASE 2 ─── -->
           <article class="case rv">
             <div class="case-head">
               <h3>Cognitive Drift Detection</h3>
@@ -648,35 +921,42 @@ footer a:hover{color:var(--ink)}
               <span class="tag">Machine Learning</span><span class="tag">Python</span>
               <span class="tag">Learning Analytics</span>
             </div>
-            <p class="claim">A system that flags a student's cognitive drift while it is still
-            recoverable — final year project, published as a peer-reviewed paper.</p>
+            <p class="claim">A web-based system that flags a student's cognitive drift while
+            it is still recoverable — final year project, published as a peer-reviewed paper.</p>
 
             <div class="beats">
               <div class="beat">
-                <span class="bt">The gap</span>
-                <p>Academic decline gets noticed at assessment time, once the student has already
-                fallen behind. The behavioural signals precede it by weeks — <strong>they're in the
-                activity data, nobody is watching them.</strong></p>
+                <span class="bt">Problem</span>
+                <p>Academic decline gets noticed at assessment time, once the student has
+                already fallen behind. The behavioural signals precede it by weeks —
+                <strong>they're in the activity data, nobody is watching them.</strong></p>
               </div>
               <div class="beat">
                 <span class="bt">Approach</span>
-                <p>A web-based system that monitors learning behaviour and applies machine learning
-                classification to sort students into <strong>Normal, Early Drift and High
-                Drift</strong> — turning a continuous signal into three states a teacher can act on.</p>
+                <p>Monitor learning behaviour and apply machine learning classification to
+                sort students into <strong>Normal, Early Drift and High Drift</strong> —
+                turning a continuous signal into three states a teacher can act on.</p>
               </div>
               <div class="beat">
-                <span class="bt">Delivered for teachers, not for me</span>
-                <p>The dashboard surfaces who crossed a threshold this week, so the output reads as
-                a name to check on rather than a model score.</p>
+                <span class="bt">What I built</span>
+                <p>The classification pipeline and the dashboards that visualise behavioural
+                trends over time, so the output reads as <strong>a name to check on</strong>
+                rather than a model score.</p>
+              </div>
+              <div class="beat">
+                <span class="bt">Outcome</span>
+                <p>Published as “Behaviour Based Cognitive Drift Detection Framework for the
+                Classroom Learning Environment” in the International Journal for Research
+                Trends and Innovation, 2026.</p>
               </div>
             </div>
 
             <div class="case-links">
-              <a class="tlink" href="https://github.com/ASIFALI-N7777/Cognitive_Drift_Learning_System" target="_blank" rel="noopener">Repository ↗</a>
+              <a class="tlink" href="https://github.com/ASIFALI-N7777/Cognitive_Drift_Learning_System" target="_blank" rel="noopener">Repository <span class="arw">↗</span></a>
             </div>
           </article>
 
-          <!-- CASE 3 -->
+          <!-- ─── CASE 3 ─── -->
           <article class="case rv">
             <div class="case-head">
               <h3>Smart Ration Distribution</h3>
@@ -691,26 +971,31 @@ footer a:hover{color:var(--ink)}
 
             <div class="beats">
               <div class="beat">
+                <span class="bt">Problem</span>
+                <p>Ration shops run on paper. That leaves room for corruption, duplicate
+                claims against one entitlement, and collection by someone who isn't the
+                beneficiary — <strong>with no record that can prove any of it.</strong></p>
+              </div>
+              <div class="beat">
                 <span class="bt">Approach</span>
-                <p>Ration is dispensed <strong>only after the beneficiary's ID card is scanned</strong> —
-                which removes the discretionary step where most leakage occurred. Every dispense
-                writes who, what, when and which shop.</p>
+                <p>Ration is dispensed <strong>only after the beneficiary's unique ID card
+                is scanned</strong>, which removes the discretionary step where most leakage
+                occurred. Every dispense writes a traceable record.</p>
               </div>
               <div class="beat">
                 <span class="bt">Why duplicates fail</span>
-                <p>The entitlement is already marked against that beneficiary for the period, so a
-                second claim has nothing to draw against. <strong>Not a policy — a data
+                <p>The entitlement is already marked against that beneficiary for the period,
+                so a second claim has nothing to draw against. <strong>Not a policy — a data
                 constraint.</strong></p>
               </div>
               <div class="beat">
-                <span class="bt">Recognition</span>
-                <p>First Prize at a national-level hackathon, 2025 — judged against entries from
-                across the country.</p>
+                <span class="bt">Outcome</span>
+                <p>First Prize at a national-level hackathon, 2025.</p>
               </div>
             </div>
 
             <div class="case-links">
-              <a class="tlink" href="https://github.com/ASIFALI-N7777" target="_blank" rel="noopener">GitHub profile ↗</a>
+              <a class="tlink" href="https://github.com/ASIFALI-N7777" target="_blank" rel="noopener">GitHub profile <span class="arw">↗</span></a>
             </div>
           </article>
 
@@ -720,48 +1005,44 @@ footer a:hover{color:var(--ink)}
   </div>
 </section>
 
-<!-- ================= CAPABILITIES ================= -->
-<section class="sec" id="capabilities">
+<!-- ══════════ EXPERIENCE ══════════ -->
+<section class="sec" id="experience">
   <div class="shell">
     <div class="sec-in">
-      <div class="rail rv"><span class="lab">Capabilities</span>
-        <span class="rail-note">Tools, and the habits that decide how they get used.</span></div>
-
+      <div class="rail rv"><span class="lab">04 — Experience</span>
+        <span class="rail-note">Short internships, stated as they were.</span></div>
       <div>
-        <h2 class="sh rv">What I work with</h2>
-        <p class="sec-lede rv">Listed by what I've actually shipped with, not by what I've
-        watched a tutorial on.</p>
+        <h2 class="sh rv">Experience</h2>
+        <p class="sec-lede rv">Both were one-month internships. Listing them at their real
+        length matters more to me than making them look longer.</p>
 
-        <div class="caps">
-          <div class="cap rv">
-            <h3>Analysis &amp; BI</h3>
-            <p>Excel — Pivot Tables, Slicers, XLOOKUP, nested IF, SUMIFS, Power Query.
-            Power BI — DAX measures, data modelling, interactive dashboards.</p>
+        <div class="rows">
+          <div class="row rv">
+            <span class="when">Internship · 1 mo</span>
+            <div>
+              <div class="what">Data Analyst — Novitech R&amp;D Pvt Ltd</div>
+              <p class="detail">Built Power BI dashboards and visual reports for business
+              stakeholders, and worked with the team to identify trends and patterns in
+              operational data. Got hands-on with the full reporting life cycle — cleaning,
+              visualisation and reporting.</p>
+              <div class="rowtags">
+                <span class="tag">Power BI</span><span class="tag">Excel</span>
+                <span class="tag">Data cleaning</span><span class="tag">Reporting</span>
+              </div>
+            </div>
           </div>
-          <div class="cap rv">
-            <h3>Data &amp; SQL</h3>
-            <p>SQL / MySQL — joins, aggregations, grouping. Data cleaning and validation,
-            ETL, exploratory analysis, KPI reporting.</p>
-          </div>
-          <div class="cap rv">
-            <h3>Programming</h3>
-            <p>Python, Java, PowerShell, HTML/CSS/JavaScript. Git and GitHub for version
-            control; Postman for API testing.</p>
-          </div>
-          <div class="cap rv">
-            <h3>Machine learning</h3>
-            <p>Supervised classification applied end to end in my final year project —
-            behavioural features through to a three-state prediction teachers can act on.</p>
-          </div>
-          <div class="cap rv">
-            <h3>AI-assisted delivery</h3>
-            <p>Claude and Claude Code for rapid prototyping, code review and documentation.
-            Faster drafts, same standard of proof before anything ships.</p>
-          </div>
-          <div class="cap rv">
-            <h3>How I work</h3>
-            <p>Auditable over clever. If a reviewer can't trace why a row was dropped, the
-            pipeline isn't done — however good the dashboard looks.</p>
+          <div class="row rv">
+            <span class="when">Internship · 1 mo</span>
+            <div>
+              <div class="what">Web Development — Codebind Technologies</div>
+              <p class="detail">Built CRUD applications across the full stack — front-end
+              forms, back-end logic and database operations — and tested REST APIs in
+              Postman, improving backend functions off the back of what the tests found.</p>
+              <div class="rowtags">
+                <span class="tag">Full stack</span><span class="tag">REST APIs</span>
+                <span class="tag">Postman</span><span class="tag">CRUD</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -769,40 +1050,17 @@ footer a:hover{color:var(--ink)}
   </div>
 </section>
 
-<!-- ================= BACKGROUND ================= -->
+<!-- ══════════ BACKGROUND ══════════ -->
 <section class="sec" id="background">
   <div class="shell">
     <div class="sec-in">
-      <div class="rail rv"><span class="lab">Background</span>
-        <span class="rail-note">Experience, education and recognition.</span></div>
-
+      <div class="rail rv"><span class="lab">05 — Background</span>
+        <span class="rail-note">Education, certifications, recognition.</span></div>
       <div>
         <h2 class="sh rv">Background</h2>
 
-        <p class="sec-lede rv" style="margin-bottom:18px"><span class="lab">Experience</span></p>
-        <div class="rows" style="margin-bottom:34px">
-          <div class="row rv">
-            <span class="when">Internship · 1 mo</span>
-            <div>
-              <div class="what">Data Analyst — Novitech R&amp;D Pvt Ltd</div>
-              <p class="detail">Built Power BI dashboards and visual reports for business
-              stakeholders; worked the full reporting life cycle from cleaning through to
-              publishing, and standardised measures so recurring reports were refreshed rather
-              than rebuilt.</p>
-            </div>
-          </div>
-          <div class="row rv">
-            <span class="when">Internship · 1 mo</span>
-            <div>
-              <div class="what">Web Development — Codebind Technologies</div>
-              <p class="detail">Full-stack CRUD applications across front-end forms, back-end
-              logic and database operations; tested and debugged REST APIs in Postman.</p>
-            </div>
-          </div>
-        </div>
-
-        <p class="sec-lede rv" style="margin-bottom:18px"><span class="lab">Education</span></p>
-        <div class="rows" style="margin-bottom:34px">
+        <p class="lab subhead rv">Education</p>
+        <div class="rows">
           <div class="row rv">
             <span class="when">2022 – 2026</span>
             <div>
@@ -819,23 +1077,31 @@ footer a:hover{color:var(--ink)}
           </div>
         </div>
 
-        <p class="sec-lede rv" style="margin-bottom:18px"><span class="lab">Certifications &amp; recognition</span></p>
+        <p class="lab subhead rv">Certifications</p>
         <div class="rows">
           <div class="row rv">
-            <span class="when">Certified</span>
-            <div>
-              <div class="what">Google Data Analytics Professional Certificate</div>
-              <p class="detail">Coursera. Also: Test Engineer — Infosys Foundation (ICT Academy);
-              Java Programming — Udemy.</p>
-            </div>
+            <span class="when">Coursera</span>
+            <div><div class="what">Google Data Analytics Professional Certificate</div></div>
           </div>
+          <div class="row rv">
+            <span class="when">ICT Academy</span>
+            <div><div class="what">Test Engineer — Infosys Foundation</div></div>
+          </div>
+          <div class="row rv">
+            <span class="when">Udemy</span>
+            <div><div class="what">Java Programming</div></div>
+          </div>
+        </div>
+
+        <p class="lab subhead rv">Publication &amp; awards</p>
+        <div class="rows">
           <div class="row rv">
             <span class="when">2026</span>
             <div>
               <div class="what">Published — IJRTI</div>
               <p class="detail">“Behaviour Based Cognitive Drift Detection Framework for the
-              Classroom Learning Environment”, International Journal for Research Trends and
-              Innovation.</p>
+              Classroom Learning Environment”, International Journal for Research Trends
+              and Innovation.</p>
             </div>
           </div>
           <div class="row rv">
@@ -849,7 +1115,7 @@ footer a:hover{color:var(--ink)}
             <span class="when">2024</span>
             <div>
               <div class="what">Second Prize — national tech hackathon</div>
-              <p class="detail">Smart Parking System — IoT and real-time occupancy detection.</p>
+              <p class="detail">Smart Parking System.</p>
             </div>
           </div>
         </div>
@@ -858,24 +1124,54 @@ footer a:hover{color:var(--ink)}
   </div>
 </section>
 
-<!-- ================= CONTACT ================= -->
+<!-- ══════════ CONTACT ══════════ -->
 <section class="sec" id="contact">
   <div class="shell">
     <div class="contact-card rv">
       <span class="lab">Open to Data Analyst / Business Analyst roles</span>
-      <h2 style="margin-top:14px">Let's talk about the messy dataset.</h2>
+      <h2>Let's talk about the messy dataset.</h2>
       <p>Happy to walk through any of this in detail — including the parts that didn't work
       first time, which are usually the more interesting half of the conversation.</p>
-      <div class="cta">
-        <button class="btn solid" id="copy" type="button">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
-          asifali.n7777@gmail.com
-        </button>
-        <a class="btn" href="tel:+919944540149">+91 99445 40149</a>
-        <a class="btn" href="https://linkedin.com/in/asifali-n7777" target="_blank" rel="noopener">LinkedIn ↗</a>
-        <a class="btn" href="https://github.com/ASIFALI-N7777" target="_blank" rel="noopener">GitHub ↗</a>
+
+      <div class="contact-grid">
+        <form id="cform" novalidate>
+          <div class="field">
+            <label for="f-name">Your name</label>
+            <input id="f-name" name="name" type="text" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="f-org">Company <span class="sr">(optional)</span></label>
+            <input id="f-org" name="org" type="text" autocomplete="organization">
+          </div>
+          <div class="field">
+            <label for="f-msg">Message</label>
+            <textarea id="f-msg" name="message" rows="4" required></textarea>
+          </div>
+          <button class="btn solid" type="submit" style="width:100%">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="2"/><path d="m3 6 9 6.5L21 6"/></svg>
+            Compose email
+          </button>
+          <p class="formnote">This page is static — no server, no form handler, nothing
+          collected here. The button opens your own mail app with the message ready to send.</p>
+        </form>
+
+        <div class="direct">
+          <span class="lab">Or reach me directly</span>
+          <a class="dline" id="copy" href="mailto:asifali.n7777@gmail.com">
+            <span class="dk">Email</span><span class="dval">asifali.n7777@gmail.com</span>
+          </a>
+          <a class="dline" href="tel:+919944540149">
+            <span class="dk">Phone</span><span class="dval">+91 99445 40149</span>
+          </a>
+          <a class="dline" href="https://linkedin.com/in/asifali-n7777" target="_blank" rel="noopener">
+            <span class="dk">LinkedIn</span><span class="dval">in/asifali-n7777</span>
+          </a>
+          <a class="dline" href="https://github.com/ASIFALI-N7777" target="_blank" rel="noopener">
+            <span class="dk">GitHub</span><span class="dval">ASIFALI-N7777</span>
+          </a>
+          <span class="copy-note" id="copied" role="status" aria-live="polite"></span>
+        </div>
       </div>
-      <span class="copy-note" id="copied" role="status" aria-live="polite"></span>
     </div>
   </div>
 </section>
@@ -892,86 +1188,152 @@ footer a:hover{color:var(--ink)}
 <script>
 (function(){
   "use strict";
-
-  /* ---- theme toggle, persisted ---- */
   var root = document.documentElement;
+  var reduce = window.matchMedia &&
+               window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- theme, persisted ---------- */
   try{
     var saved = localStorage.getItem("theme");
     if(saved === "dark" || saved === "light") root.setAttribute("data-theme", saved);
   }catch(e){}
 
-  function currentIsDark(){
-    var attr = root.getAttribute("data-theme");
-    if(attr) return attr === "dark";
-    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  function isDark(){
+    var a = root.getAttribute("data-theme");
+    if(a) return a === "dark";
+    return !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
   }
-
-  var btn = document.getElementById("theme");
-  if(btn){
-    btn.addEventListener("click", function(){
-      var next = currentIsDark() ? "light" : "dark";
+  var themeBtn = document.getElementById("theme");
+  if(themeBtn){
+    themeBtn.addEventListener("click", function(){
+      var next = isDark() ? "light" : "dark";
       root.setAttribute("data-theme", next);
       try{ localStorage.setItem("theme", next); }catch(e){}
     });
   }
 
-  /* ---- copy email ---- */
-  var copyBtn = document.getElementById("copy");
-  var note = document.getElementById("copied");
-  if(copyBtn){
-    copyBtn.addEventListener("click", function(){
-      var addr = "asifali.n7777@gmail.com";
-      function done(ok){
-        if(!note) return;
-        note.textContent = ok ? "Copied to clipboard" : "Press Ctrl+C to copy";
-        note.classList.add("on");
-        setTimeout(function(){ note.classList.remove("on"); }, 2400);
+  /* ---------- mobile drawer ---------- */
+  var menuBtn = document.getElementById("menu-btn");
+  var drawer  = document.getElementById("drawer");
+
+  function setMenu(open){
+    document.body.classList.toggle("nav-open", open);
+    if(menuBtn){
+      menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+      menuBtn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    }
+  }
+  if(menuBtn && drawer){
+    menuBtn.addEventListener("click", function(){
+      setMenu(!document.body.classList.contains("nav-open"));
+    });
+    drawer.addEventListener("click", function(e){
+      if(e.target.closest("a")) setMenu(false);
+    });
+    document.addEventListener("keydown", function(e){
+      if(e.key === "Escape" && document.body.classList.contains("nav-open")){
+        setMenu(false);
+        menuBtn.focus();
       }
-      if(navigator.clipboard && navigator.clipboard.writeText){
-        navigator.clipboard.writeText(addr).then(function(){ done(true); },
-                                                 function(){ done(false); });
-      } else { done(false); }
+    });
+    // a resize into desktop must not leave the body scroll-locked
+    window.addEventListener("resize", function(){
+      if(window.innerWidth >= 900 && document.body.classList.contains("nav-open")) setMenu(false);
+    }, { passive:true });
+  }
+
+  /* ---------- contact form -> the visitor's own mail client ---------- */
+  var form = document.getElementById("cform");
+  if(form){
+    form.addEventListener("submit", function(e){
+      e.preventDefault();
+      var name = (form.name && form.name.value || "").trim();
+      var org  = (form.org  && form.org.value  || "").trim();
+      var msg  = (form.message && form.message.value || "").trim();
+
+      if(!name || !msg){
+        var missing = !name ? form.querySelector("#f-name") : form.querySelector("#f-msg");
+        if(missing) missing.focus();
+        return;
+      }
+      var subject = "Portfolio enquiry — " + name + (org ? " (" + org + ")" : "");
+      var body = msg + "\n\n— " + name + (org ? "\n" + org : "");
+      window.location.href = "mailto:asifali.n7777@gmail.com"
+        + "?subject=" + encodeURIComponent(subject)
+        + "&body=" + encodeURIComponent(body);
     });
   }
 
-  /* ---- reveal on scroll ---- */
-  var items = document.querySelectorAll(".rv");
-  var reduce = window.matchMedia &&
-               window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  /* ---------- copy email ---------- */
+  var copyLink = document.getElementById("copy");
+  var note = document.getElementById("copied");
+  if(copyLink){
+    copyLink.addEventListener("click", function(e){
+      if(!(navigator.clipboard && navigator.clipboard.writeText)) return; // let mailto run
+      e.preventDefault();
+      navigator.clipboard.writeText("asifali.n7777@gmail.com").then(function(){
+        if(note){
+          note.textContent = "Address copied to clipboard";
+          note.classList.add("on");
+          setTimeout(function(){ note.classList.remove("on"); }, 2400);
+        }
+      }, function(){
+        window.location.href = "mailto:asifali.n7777@gmail.com";
+      });
+    });
+  }
 
+  /* ---------- scroll reveal ---------- */
+  var items = document.querySelectorAll(".rv");
   if(reduce || !("IntersectionObserver" in window)){
     for(var i=0;i<items.length;i++) items[i].classList.add("in");
   } else {
     var io = new IntersectionObserver(function(entries){
       entries.forEach(function(en){
-        if(en.isIntersecting){
-          en.target.classList.add("in");
-          io.unobserve(en.target);
-        }
+        if(en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); }
       });
     }, { rootMargin:"0px 0px -8% 0px", threshold:0.06 });
     for(var j=0;j<items.length;j++) io.observe(items[j]);
   }
 
-  /* ---- scroll-spy on the top nav ---- */
-  var navLinks = Array.prototype.slice.call(
-                   document.querySelectorAll('.tnav a[href^="#"]'));
-  var targets = navLinks.map(function(a){
-    return document.getElementById(a.getAttribute("href").slice(1));
+  /* ---------- hero ledger: rows settle one after another ---------- */
+  var ldRows = document.querySelectorAll("#ld-rows .ld-row");
+  if(reduce){
+    ldRows.forEach(function(r){ r.classList.add("settled"); });
+  } else if(ldRows.length){
+    var lio = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(!en.isIntersecting) return;
+        lio.disconnect();
+        ldRows.forEach(function(r, k){
+          setTimeout(function(){ r.classList.add("settled"); }, 260 + k * 150);
+        });
+      });
+    }, { threshold:0.3 });
+    lio.observe(document.getElementById("ld-rows"));
+  }
+
+  /* ---------- scroll-spy across both navs ---------- */
+  var links = Array.prototype.slice.call(
+                document.querySelectorAll('.tnav a[href^="#"], .drawer-nav a[href^="#"]'));
+  var ids = [];
+  links.forEach(function(a){
+    var id = a.getAttribute("href").slice(1);
+    if(ids.indexOf(id) === -1) ids.push(id);
   });
 
   function spy(){
-    var best = -1, bestTop = -Infinity, probe = window.innerHeight * 0.28;
-    for(var i=0;i<targets.length;i++){
-      var t = targets[i];
-      if(!t) continue;
+    var probe = window.innerHeight * 0.28, activeId = null, bestTop = -Infinity;
+    ids.forEach(function(id){
+      var t = document.getElementById(id);
+      if(!t) return;
       var top = t.getBoundingClientRect().top;
-      if(top <= probe && top > bestTop){ bestTop = top; best = i; }
-    }
-    for(var k=0;k<navLinks.length;k++){
-      if(k === best) navLinks[k].setAttribute("aria-current","true");
-      else navLinks[k].removeAttribute("aria-current");
-    }
+      if(top <= probe && top > bestTop){ bestTop = top; activeId = id; }
+    });
+    links.forEach(function(a){
+      if(activeId && a.getAttribute("href") === "#" + activeId) a.setAttribute("aria-current","true");
+      else a.removeAttribute("aria-current");
+    });
   }
 
   var ticking = false;
