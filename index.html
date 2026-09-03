@@ -526,6 +526,36 @@ footer a{color:var(--faint);text-decoration:none;display:inline-flex;
   align-items:center;padding:var(--s1) 0}
 footer a:hover{color:var(--ink)}
 
+/* ── portrait ───────────────────────────────────────────────── */
+.about-wrap{display:grid;gap:var(--s6);align-items:start}
+@media (min-width:820px){
+  .about-wrap{grid-template-columns:minmax(0,1fr) 244px;gap:var(--s8)}
+}
+.portrait{
+  position:relative;justify-self:start;width:100%;max-width:236px;
+  order:-1;
+}
+@media (min-width:820px){.portrait{order:0;justify-self:end}}
+/* a soft halo so the cutout is not floating in nothing */
+.portrait::before{
+  content:"";position:absolute;inset:-8% -6% 6% -6%;border-radius:50%;
+  background:radial-gradient(ellipse at 50% 42%,var(--accent-soft),transparent 68%);
+  z-index:0;
+}
+.portrait img{
+  position:relative;z-index:1;display:block;width:100%;height:auto;
+  filter:drop-shadow(0 12px 28px rgba(0,0,0,.16));
+}
+:root[data-theme="dark"] .portrait img{filter:drop-shadow(0 12px 28px rgba(0,0,0,.55))}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .portrait img{filter:drop-shadow(0 12px 28px rgba(0,0,0,.55))}
+}
+.portrait figcaption{
+  position:relative;z-index:1;margin-top:var(--s3);
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--faint);text-align:center;
+}
+
 /* ═══════════════════════════════════════════════════════════════
    MOTION LAYER
    ═══════════════════════════════════════════════════════════════ */
@@ -731,6 +761,8 @@ footer a:hover{color:var(--ink)}
         <span class="rail-note">Where I am, and where I'm heading.</span></div>
       <div class="about">
         <h2 class="sh rv">About</h2>
+        <div class="about-wrap">
+          <div>
         <p class="rv">I'm finishing a B.Tech in Information Technology at Arunai Engineering
         College and I work on the unglamorous half of analytics: getting data into a state
         where the conclusions actually hold. <strong>Two internships, three projects, one
@@ -745,6 +777,17 @@ footer a:hover{color:var(--ink)}
         build. <strong>I'm a fresher, and I'd rather be judged on the work than on a job
         title.</strong> What I'm looking for now is a first analyst role where the data is
         real and the questions are someone's actual problem.</p>
+          </div>
+
+          <figure class="portrait rv">
+            <picture>
+              <source srcset="asifali.webp" type="image/webp">
+              <img src="asifali.png" width="450" height="550" loading="lazy" decoding="async"
+                   alt="Asifali N, wearing a dark suit and white shirt.">
+            </picture>
+            <figcaption>Asifali N</figcaption>
+          </figure>
+        </div>
       </div>
     </div>
   </div>
